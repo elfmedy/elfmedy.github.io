@@ -1,0 +1,635 @@
+---
+title: kendryte 210
+date: 2019-04-15 21:57:33
+tags: MCU, k210, AI
+---
+
+## 1.简介
+
+{% asset_img "kendryte 210.png" kendryte 210 %}
+
+K210 包含 RISC-V 64 位双核 CPU，每个核心内置独立 FPU。 K210 的核心功能是机器视觉与听觉，其包含用于计算卷积人工神经网络的 KPU 与用于处理麦克风阵列输入的 APU。 同时 K210 具备快速傅里叶变换加速器，可以进行高性能复数 FFT 计算。因此对于大多数机器学习算法，K210 具备高性能处理能力。K210 内嵌 AES 与 SHA256 算法加速器，为用户提供基本安全功能。
+
+## 2.程序编译
+
+总共的 SRAM 是 8M，其中通用 SRAM 为 6M，AI SRAM 为 2M。映射为两段连续的内存空间，可以通过 CPU cahce 访问，也可以不通过 cache 访问。
+
+{% asset_img "sram.png" sram %}
+
+因为是 SRAM 内存，所以 text 和 data 是可以直接存放而不需要在运行时复制的，只有 bss 数据，是不需要放到 SRAM 中的，链接脚本的部分内容如下。注意关于 bss 段那里的内容
+
+<pre class="themepre">
+>ram AT>ram :ram
+</pre>
+
+前面的 >ram 是运行地址是在 ram 中，后面的 AT>ram:ram 是加载地址也是在 ram 中，但是后面是 PHDRS 头，其中冒号后面的是 PT_NULL 属性，所以其实是不会放到加载文件中的。不过前面的运行地址还是占用空间的，所以后面初始化 bss 也是用的这里的 _bss 和 _ebss 的地址。
+
+
+<pre class="themepre">
+MEMORY
+{
+  /*
+   * Memory with CPU cache.
+   *6M CPU SRAM
+   */
+  ram (wxa!ri) : ORIGIN = 0x80000000, LENGTH = (6 * 1024 * 1024)
+  /*
+   * Memory without CPU cache
+   * 6M CPU SRAM
+  */
+  ram_nocache (wxa!ri) : ORIGIN = 0x40000000, LENGTH = (6 * 1024 * 1024)
+}
+
+/*
+ * The linker only pays attention to the PHDRS command when generating
+ * an ELF output file. In other cases, the linker will simply ignore PHDRS.
+ */
+PHDRS
+{
+  ram_ro   PT_LOAD;
+  ram_init PT_LOAD;
+  ram      PT_NULL;
+}
+
+/*
+ * This is where we specify how the input sections map to output
+ * sections.
+ */
+SECTIONS
+{
+  /* Program code segment, also known as a text segment */
+  .text :
+  {
+    PROVIDE( _text = ABSOLUTE(.) );
+    /* Initialization code segment */
+    KEEP( *(.text.start) )
+    *(.text.unlikely .text.unlikely.*)
+    *(.text.startup .text.startup.*)
+    /* Normal code segment */
+    *(.text .text.*)
+    *(.gnu.linkonce.t.*)
+
+    . = ALIGN(8);
+    PROVIDE( _etext = ABSOLUTE(.) );
+  } >ram AT>ram :ram_ro
+
+  /* Read-only data segment */
+  .rodata :
+  {
+    *(.rdata)
+    *(.rodata .rodata.*)
+    *(.gnu.linkonce.r.*)
+  } >ram AT>ram :ram_ro
+
+  /* .data, .sdata and .srodata segment */
+  .data :
+  {
+    /* Writable data segment (.data segment) */
+    *(.data .data.*)
+    *(.gnu.linkonce.d.*)
+    /* Have _gp point to middle of sdata/sbss to maximize displacement range */
+    . = ALIGN(8);
+    PROVIDE( __global_pointer$ = ABSOLUTE(.) + 0x800);
+    /* Writable small data segment (.sdata segment) */
+    *(.sdata .sdata.*)
+    *(.gnu.linkonce.s.*)
+    /* Read-only small data segment (.srodata segment) */
+    . = ALIGN(8);
+    *(.srodata.cst16)
+    *(.srodata.cst8)
+    *(.srodata.cst4)
+    *(.srodata.cst2)
+    *(.srodata .srodata.*)
+    /* Align _edata to cache line size */
+    . = ALIGN(64);
+    PROVIDE( _edata = ABSOLUTE(.) );
+  } >ram AT>ram :ram_init
+
+  /* .bss and .sbss segment */
+   <span class="themespan">// 这里需要注意， _bss 和 _ebss 会在程序中用到，用来初始化 bss 为 0</span>
+  .bss :
+  {
+    PROVIDE( _bss = ABSOLUTE(.) );
+    /* Writable uninitialized small data segment (.sbss segment)*/
+    *(.sbss .sbss.*)
+    *(.gnu.linkonce.sb.*)
+    *(.scommon)
+    /* Uninitialized writeable data section (.bss segment)*/
+    *(.bss .bss.*)
+    *(.gnu.linkonce.b.*)
+    *(COMMON)
+
+    . = ALIGN(8);
+    PROVIDE( _ebss = ABSOLUTE(.) );
+  } <span class="themespan">>ram AT>ram :ram   // 这里是 PT_NULL，不会在 elf 中有实际内容</span>
+</pre>
+
+cmake 中的编译选项如下，注意链接选项中的 -nostartfiles，就是不会采用 C 库的启动文件，所以这里是自己实现了 crt0.S 文件。
+
+<pre class="themepre">
+add_compile_flags(LD
+        -nostartfiles    <span class="themespan">// 不使用 C 库的启动文件</span>
+        -static
+        -Wl,--gc-sections
+        -Wl,-static
+        -Wl,--start-group
+        -Wl,--whole-archive
+        -Wl,--no-whole-archive
+        -Wl,--end-group
+        -Wl,-EL
+        -Wl,--no-relax
+        -T ${SDK_ROOT}/lds/kendryte.ld
+        )
+
+# C Flags Settings
+add_compile_flags(BOTH
+        -mcmodel=medany
+        -mabi=lp64f
+        -march=rv64imafc
+        -fno-common
+        -ffunction-sections
+        -fdata-sections
+        -fstrict-volatile-bitfields
+        -fno-zero-initialized-in-bss
+        -Os
+        -ggdb
+        )
+</pre>
+
+## 3.启动代码
+
+启动之后 _start 代码做一些简单处理之后会跳转到 _init_bsp() 函数，函数中会初始化 bss，然后会进入 main() 函数。其中 init_bss() 函数利用链接脚本中 bss 段的 _bss 和 _ebss 这两个符号（运行地址），把这两个地址之间的空间全部设置成 0。
+
+<pre class="themepre">
+<span class="themespan">// lib/bsp/entry_user.c</span>
+
+void _init_bsp(int core_id, int number_of_cores)
+{
+    extern int main(int argc, char* argv[]);
+    extern void __libc_init_array(void);
+    extern void __libc_fini_array(void);
+
+    if (core_id == 0)
+    {
+        /* Initialize bss data to 0 */
+        <span class="themespan">// 利用链接脚本中的 _bss 和 _ebss，将之间的内存清零</span>
+        init_bss();
+        /* Init UART */
+        <span class="themespan">// 配置 uart 寄存器，波特率配置成 115200</span>
+        uarths_init();
+        /* Init FPIOA */
+        <span class="themespan">// 初始化 FPGA 的端口映射</span>
+        fpioa_init();
+        /* Register finalization function */
+        atexit(__libc_fini_array);
+        /* Init libc array for C++ */
+        <span class="themespan">// C 库的初始化函数，下面讲</span>
+        __libc_init_array();
+        /* Get reset status */
+        sysctl_get_reset_status();
+    }
+
+    int ret = 0;
+    <span class="themespan">// 双核启动的函数下面会分析</span>
+    if (core_id == 0)
+    {
+        core1_instance.callback = NULL;
+        core1_instance.ctx = NULL;
+        <span class="themespan">// 这里 os_entry 的实现，其实就是调用 main() 函数</span>
+        <span class="themespan">// 在 main 函数中，可以调用 register_core1 来注册 core1 的回调函数，然后使能 core1</span>
+        ret = os_entry(core_id, number_of_cores, main);
+    }
+    else
+    {
+        <span class="themespan">// 根据下面的函数内容，这里是 while(1) 死循环，直到 g_wake_up[1] = 1</span>
+        <span class="themespan">// 而这个标志位的设置，是在 core_enable() 中设置的</span>
+        thread_entry(core_id);
+        <span class="themespan">// 只有 enable_core(1) 并且 core1_instance.callback 有值，才会调用相应的回调函数</span>
+        if(core1_instance.callback == NULL)
+            asm volatile ("wfi");
+        else
+            ret = core1_instance.callback(core1_instance.ctx);
+    }
+    exit(ret);
+}
+</pre>
+
+需要注意的一点是，虽然不会使用 C 库的启动文件（编译选项中有 -nostartfiles 选项），是自己实现的 _start，这里还是调用了 C 库里面的 __libc_init_array 函数。这个函数的内容就是对 C 和 C++ 的全局变量和构造函数之类的初始化，具体可以看 libc 中相关的代码。
+
+<pre class="themepre">
+<span class="themespan">// C 库中初始化 C 的全局变量，还有 C++ 的构造函数的地方</span>
+
+static void __libc_init_array() {
+    size_t count, i;
+    
+    count = __preinit_array_end - __preinit_array_start;
+    for (i = 0; i < count; i++)
+         __preinit_array_start[i]();
+    _init();
+
+    count = __init_array_end - __init_array_start;
+    for (i = 0; i < count; i++)
+        __init_array_start[i]();
+}
+</pre>
+
+注意因为是双核，所以这里会做判断，只是先启动 core0，而 core1 是等待 core0 设置一个标志位之后再启动。上面 core1 等待标志位的几个函数的代码实现如下，core1 是循环等待标志位为 1。这里使用到的 g_wake_up[2] 数组是在 crt0.S 中定义的，其中 g_wake_up[0] = 1，而 g_wake_up[1] = 0，结合代码的判断，也就是 core1 默认是不启动的。初始启动的时候，core0 开始运行，并且进入它的 main 函数，core1 死循环等待 g_wake_up[1] 标志位变为 1。可以在 core0 的 main 函数中通过 register_core1 来注册 core1 的回调函数，并且调用 enable_core(1) 来修改标志位，这样，core1 就可以开始运行了。
+
+<pre class="themepre">
+<span class="themespan">// crt0.S 文件</span>
+.section .text.start, "ax", @progbits
+.globl _start
+_start:
+  j 1f
+  .word 0xdeadbeef
+  .align 3
+  .global g_wake_up
+  g_wake_up:
+      .dword 1
+      .dword 0
+
+<span class="themespan">// lib/bsp/entry_user.c 文件</span>
+
+// 初始的时候，core1 就是死循环卡在这个地方
+void thread_entry(int core_id)
+{
+    while (!atomic_read(&g_wake_up[core_id]));
+}
+
+<span class="themespan">// 可以在 core0 的 main 函数中调用这个函数，来让 core0 开始运行</span>
+void core_enable(int core_id)
+{
+    clint_ipi_send(core_id);
+    atomic_set(&g_wake_up[core_id], 1);
+}
+
+<span class="themespan">// 可以在 core0 的 main 中注册 core1 的回调函数</span>
+int register_core1(core_function func, void *ctx)
+{
+    if(func == NULL)
+        return -1;
+    core1_instance.callback = func;
+    core1_instance.ctx = ctx;
+    core_enable(1);
+    return 0;
+}
+</pre>
+
+## 4.中断陷阱
+
+在 crt0.S 中设置了 mtvec 中断陷阱的地址，中断或者陷阱触发的时候都会进入 machine 模式，调用这个函数。下面的代码，是将 mtvec 寄存器设置为 trap_entry 函数，这样发生软件陷阱或者中断的时候，会调用这个函数。
+
+<pre class="themepre">
+<span class="themespan">// crt.S 部分代码</span>
+.section .text.start, "ax", @progbits
+.globl _start
+_start:       <span class="themespan">// 入口地主</span>
+  j 1f        <span class="themespan">// 跳转到 1，数字表示 local 跳转，f 表示向前，b 表示向后</span>
+  .word 0xdeadbeef
+  .align 3
+  .global g_wake_up    <span class="themespan">// 这里是 g_wake_up[2] 数组的定义</span>
+  g_wake_up:
+      .dword 1
+      .dword 0
+1:
+  csrw mideleg, 0
+  csrw medeleg, 0
+  csrw mie, 0
+  csrw mip, 0
+  la t0, trap_entry    <span class="themespan">// 在这里设置了 trap_entry 入口，设置给 mtvec 寄存器</span>
+  csrw mtvec, t0
+</pre>
+
+而 trap_entry 的部分包括了对中断和软中断（陷阱）的处理，删减后的部分代码如下。代码既可以处理硬件中断，也可以处理软件中断。硬件中断的话就是调用 handle_irq，软件中断的话，就是调用 handle_syscall，后面会分别分析相关的函数。
+
+<pre class="themepre">
+  .globl trap_entry
+  .type trap_entry, @function
+  .align 2
+trap_entry:
+  addi sp, sp, -REGBYTES
+  sd t0, 0x0(sp)
+  csrr t0, mcause
+  bgez t0, .handle_other
+  # Test soft interrupt
+  slli t0, t0, 1
+  addi t0, t0, -(IRQ_M_SOFT << 1)
+  bnez t0, .handle_other
+  # Interupt is soft interrupt
+  # Get event
+  addi sp, sp, -REGBYTES
+  sd t1, 0x0(sp)
+  la   t0, g_core_pending_switch
+  csrr t1, mhartid
+  slli t1, t1, 3
+  add  t0, t0, t1
+  ld t1, 0x0(sp)
+  addi sp, sp, REGBYTES
+  # Test ContextSwitch event
+  ld   t0, 0x0(t0)
+  beqz t0, .handle_other
+
+  ld t0, 0x0(sp)
+  addi sp, sp, REGBYTES
+  # Do not use jal here
+  j    xPortSysTickInt
+  mret    <span class="themespan">// 这里就是中断陷阱返回指令</span>
+
+.handle_other:
+  ld   t0, 0x0(sp)
+  addi sp, sp, REGBYTES
+  addi sp, sp, -64*REGBYTES
+
+    ......
+
+  csrr a0, mcause
+  csrr a1, mepc
+  mv a2, sp
+  add a3, sp, 32*REGBYTES
+  bgez a0, .handle_syscall    <span class="themespan">// 如果是满足上面的判断的话，判断是陷阱，会去调用 syscall</span>
+.handle_irq:                  <span class="themespan">// 否则的话就是硬件中断，就是调用 handle_irq</span>
+  jal handle_irq
+  j .restore
+.handle_syscall:
+  jal handle_syscall
+.restore:
+  csrw mepc, a0
+    
+    ......
+
+  addi sp, sp, 64*REGBYTES
+  mret
+</pre>
+
+对于硬件中断，是通过 PLIC 中断控制器来管理的。它的实现里面猜测是接收各种输入中断然后仲裁，最后由一个输出连接到 CPU 的外部中断。PLIC 的中断输入引脚是固定的接到各个外设的，比如引脚 1 是固定连接到外设 x 的中断输出，这个是固定关系的。PLIC 的驱动通过这个固定的中断来注册对应的处理函数。PLIC 硬件和外设中断的对应关系部分如下。
+
+<pre class="themepre">
+/* clang-format off */
+typedef enum _plic_irq
+{
+    IRQN_NO_INTERRUPT        = 0, /*!< The non-existent interrupt */
+    IRQN_SPI0_INTERRUPT      = 1, /*!< SPI0 interrupt */
+    IRQN_SPI1_INTERRUPT      = 2, /*!< SPI1 interrupt */
+    IRQN_SPI_SLAVE_INTERRUPT = 3, /*!< SPI_SLAVE interrupt */
+    IRQN_SPI3_INTERRUPT      = 4, /*!< SPI3 interrupt */
+    IRQN_I2S0_INTERRUPT      = 5, /*!< I2S0 interrupt */
+    IRQN_I2S1_INTERRUPT      = 6, /*!< I2S1 interrupt */
+    IRQN_I2S2_INTERRUPT      = 7, /*!< I2S2 interrupt */
+    IRQN_I2C0_INTERRUPT      = 8, /*!< I2C0 interrupt */
+    IRQN_I2C1_INTERRUPT      = 9, /*!< I2C1 interrupt */
+    IRQN_I2C2_INTERRUPT      = 10, /*!< I2C2 interrupt */
+    IRQN_UART1_INTERRUPT     = 11, /*!< UART1 interrupt */
+    IRQN_UART2_INTERRUPT     = 12, /*!< UART2 interrupt */
+    IRQN_UART3_INTERRUPT     = 13, /*!< UART3 interrupt */
+</pre>
+
+handle_irq 的代码如下，代码里面会根据中断的不同类型来选择不同的处理函数，对于外部中断，就是调用 handle_irq_m_ext 函数，而这个函数就是在 PLIC 的驱动中实现的。
+
+<pre class="themepre">
+<span class="themespan">// driver/bsp/interrupt.c</span>
+handle_irq(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32])
+{
+#if defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Woverride-init"
+#endif
+    /* clang-format off */
+    static uintptr_t (* const irq_table[])(
+        uintptr_t cause,
+        uintptr_t epc,
+        uintptr_t regs[32],
+        uintptr_t fregs[32]) =
+    {
+        <span class="themespan">// 会根据中断的类型来选择不同的处理函数</span>
+        [0 ... 14]    = handle_irq_dummy,
+        [IRQ_M_SOFT]  = handle_irq_m_soft,
+        [IRQ_M_TIMER] = handle_irq_m_timer,
+        [IRQ_M_EXT]   = handle_irq_m_ext,    
+    };
+    /* clang-format on */
+#if defined(__GNUC__)
+#pragma GCC diagnostic warning "-Woverride-init"
+#endif
+    return irq_table[cause & CAUSE_MACHINE_IRQ_REASON_MASK](cause, epc, regs, fregs);
+}
+</pre>
+
+PLIC 驱动中有中断注册和 handle_irq_m_ext 的实现，其实就是一个中断处理的表格，根据中断号来调用不同的处理函数。
+
+<pre class="themepre">
+<span class="themespan">// 注册 plic 中断处理函数，就是将中断号和相应的处理函数关联起来</span>
+void plic_irq_register(plic_irq_t irq, plic_irq_callback_t callback, void *ctx)
+{
+    /* Read core id */
+    unsigned long core_id = current_coreid();
+    /* Set user callback function */
+    plic_instance[core_id][irq].callback = callback;
+    /* Assign user context */
+    plic_instance[core_id][irq].ctx = ctx;
+}
+
+<span class="themespan">// 而 handle_irq_m_ext 调用的时候会返回中断号，根据这个来调用相应的中断处理函数</span>
+handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
+{
+    /*
+     * After the highest-priority pending interrupt is claimed by a target
+     * and the corresponding IP bit is cleared, other lower-priority
+     * pending interrupts might then become visible to the target, and so
+     * the PLIC EIP bit might not be cleared after a claim. The interrupt
+     * handler can check the local meip/heip/seip/ueip bits before exiting
+     * the handler, to allow more efficient service of other interrupts
+     * without first restoring the interrupted context and taking another
+     * interrupt trap.
+     */
+    if (read_csr(mip) & MIP_MEIP)
+    {
+        /* Get current core id */
+        uint64_t core_id = current_coreid();
+        /* Get primitive interrupt enable flag */
+        uint64_t ie_flag = read_csr(mie);
+        /* Get current IRQ num */
+        uint32_t int_num = plic->targets.target[core_id].claim_complete;
+        /* Get primitive IRQ threshold */
+        uint32_t int_threshold = plic->targets.target[core_id].priority_threshold;
+        /* Set new IRQ threshold = current IRQ threshold */
+        plic->targets.target[core_id].priority_threshold = plic->source_priorities.priority[int_num];
+        /* Disable software interrupt and timer interrupt */
+        clear_csr(mie, MIP_MTIP | MIP_MSIP);
+        /* Enable global interrupt */
+        set_csr(mstatus, MSTATUS_MIE);
+        if (plic_instance[core_id][int_num].callback)
+            plic_instance[core_id][int_num].callback(
+                plic_instance[core_id][int_num].ctx);    <span class="themespan">// 调用中断处理函数</span>
+        /* Perform IRQ complete */
+        plic->targets.target[core_id].claim_complete = int_num;
+        /* Disable global interrupt */
+        clear_csr(mstatus, MSTATUS_MIE);
+        /* Set MPIE and MPP flag used to MRET instructions restore MIE flag */
+        set_csr(mstatus, MSTATUS_MPIE | MSTATUS_MPP);
+        /* Restore primitive interrupt enable flag */
+        write_csr(mie, ie_flag);
+        /* Restore primitive IRQ threshold */
+        plic->targets.target[core_id].priority_threshold = int_threshold;
+    }
+
+    return epc;
+}
+</pre>
+
+比如对于 kpu，在初始化的时候就是注册了中断处理函数
+
+<pre class="themepre">
+void kpu_init(int eight_bit_mode, plic_irq_callback_t callback, void *userdata)
+{
+    kpu->interrupt_clear.reg = 7;
+    kpu->fifo_threshold.data = (kpu_config_fifo_threshold_t)
+    {
+        .fifo_full_threshold = 10, .fifo_empty_threshold = 1
+    };
+    kpu->eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
+    {
+        .eight_bit_mode = eight_bit_mode
+    };
+    kpu->interrupt_mask.data = (kpu_config_interrupt_t)
+    {
+        .calc_done_int = 1,
+        .layer_cfg_almost_empty_int = 0,
+        .layer_cfg_almost_full_int = 1
+    };
+
+    plic_irq_enable(IRQN_AI_INTERRUPT);
+    plic_set_priority(IRQN_AI_INTERRUPT, 1);
+    plic_irq_register(IRQN_AI_INTERRUPT, callback, userdata);
+}
+</pre>
+
+而对于陷阱的处理函数 handle_syscall 的实现，也会根据不同的方式来调用不同的处理函数。源代码中 handle_ecall_u/h/s/m 都是默认为 handle_ecall 函数
+
+<pre class="themepre">
+// lib/bsp/syscall.c
+uintptr_t __attribute__((weak, alias("handle_ecall")))
+handle_ecall_u(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
+
+uintptr_t __attribute__((weak, alias("handle_ecall")))
+handle_ecall_h(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
+
+uintptr_t __attribute__((weak, alias("handle_ecall")))
+handle_ecall_s(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
+
+uintptr_t __attribute__((weak, alias("handle_ecall")))
+handle_ecall_m(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
+
+uintptr_t handle_syscall(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32])
+{
+
+    static uintptr_t (* const cause_table[])(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]) =
+    {
+        [CAUSE_MISALIGNED_FETCH]      = handle_misaligned_fetch,
+        [CAUSE_FAULT_FETCH]           = handle_fault_fetch,
+        [CAUSE_ILLEGAL_INSTRUCTION]   = handle_illegal_instruction,
+        [CAUSE_BREAKPOINT]            = handle_breakpoint,
+        [CAUSE_MISALIGNED_LOAD]       = handle_misaligned_load,
+        [CAUSE_FAULT_LOAD]            = handle_fault_load,
+        [CAUSE_MISALIGNED_STORE]      = handle_misaligned_store,
+        [CAUSE_FAULT_STORE]           = handle_fault_store,
+        [CAUSE_USER_ECALL]            = handle_ecall_u,
+        [CAUSE_SUPERVISOR_ECALL]      = handle_ecall_h,
+        [CAUSE_HYPERVISOR_ECALL]      = handle_ecall_s,
+        [CAUSE_MACHINE_ECALL]         = handle_ecall_m,
+    };
+
+    return cause_table[cause](cause, epc, regs, fregs);
+}
+</pre>
+
+在 sys_write 函数中直接调用了串口进行输出，注意这里的串口输出，它没有实现直接的使用串口进行输出的函数，而是通过 syscall 实现了这个。这个是借助于对应的 newlib 的移植，其中 printf 的调用最终应该是调用相应的 syscall。
+
+<pre class="themepre">
+<span class="themespan">// lib/bsp/syscall.c 中的 handle_ecall 函数</span>
+uintptr_t __attribute__((weak))
+handle_ecall(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32])
+{
+    UNUSED(cause);
+    UNUSED(fregs);
+    enum syscall_id_e
+    {
+        SYS_ID_NOSYS,
+        SYS_ID_SUCCESS,
+        SYS_ID_EXIT,
+        SYS_ID_BRK,
+        SYS_ID_WRITE,
+        SYS_ID_FSTAT,
+        SYS_ID_CLOSE,
+        SYS_ID_GETTIMEOFDAY,
+        SYS_ID_MAX
+    };
+
+    static uintptr_t (* const syscall_table[])(long a0, long a1, long a2, long a3, long a4, long a5, unsigned long n) =
+    {
+        [SYS_ID_NOSYS]         = (void *)sys_nosys,
+        [SYS_ID_SUCCESS]       = (void *)sys_success,
+        [SYS_ID_EXIT]          = (void *)sys_exit,
+        [SYS_ID_BRK]           = (void *)sys_brk,
+        [SYS_ID_WRITE]         = (void *)sys_write,
+        [SYS_ID_FSTAT]         = (void *)sys_fstat,
+        [SYS_ID_CLOSE]         = (void *)sys_close,
+        [SYS_ID_GETTIMEOFDAY]  = (void *)sys_gettimeofday,
+    };
+
+<span class="themespan">//sys_write 的函数实现</span>
+static ssize_t sys_write(int file, const void *ptr, size_t len)
+{
+    ssize_t res = -EBADF;
+
+    /**
+     * Write to a file.
+     *
+     * ssize_t write(int file, const void *ptr, size_t len)
+     *
+     * IN : regs[10] = file, regs[11] = ptr, regs[12] = len
+     * OUT: regs[10] = len
+     */
+
+    /* Get size to write */
+    register size_t length = len;
+    /* Get data pointer */
+    register char *data = (char *)ptr;
+
+    if (STDOUT_FILENO == file || STDERR_FILENO == file)
+    {
+        /* Write data */
+        while (length-- > 0 && *data != 0)
+            uarths_putchar(*(data++));    <span class="themespan">// 调用了串口输出函数</span>
+
+        /* Return the actual size written */
+        res = len;
+    }
+    else
+    {
+        /* Not support yet */
+        res = -ENOSYS;
+    }
+
+    return res;
+}
+</pre>
+
+当然，它也实现了直接通过串口输出的函数 printk，这个是不经过 C 库的
+
+<pre class="themepre">
+int printk(const char *format, ...)
+{
+    va_list ap;
+
+    va_start(ap, format);
+    /* Begin protected code */
+    corelock_lock(&lock);
+    tfp_format(stdout_putp, uart_putf, format, ap);
+    /* End protected code */
+    corelock_unlock(&lock);
+    va_end(ap);
+
+    return 0;
+}
+</pre>
+
+实际调试过程中，下载程序是可以的，但是串口输出总是不成功，然而把跳帽拔掉之后接上自己的串口转 USB 之后串口是可以输出的，所以怀疑是 CH340 这个串口转 USB 有问题。
