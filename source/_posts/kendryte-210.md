@@ -1,12 +1,12 @@
 ---
 title: kendryte 210
 date: 2019-04-15 21:57:33
-tags: MCU, k210, AI
+tags: [MCU, k210, AI]
 ---
 
 ## 1.简介
 
-{% asset_img "kendryte 210.png" kendryte 210 %}
+{% asset_img "kendryte 210.png" 416  "kendryte 210" %}
 
 K210 包含 RISC-V 64 位双核 CPU，每个核心内置独立 FPU。 K210 的核心功能是机器视觉与听觉，其包含用于计算卷积人工神经网络的 KPU 与用于处理麦克风阵列输入的 APU。 同时 K210 具备快速傅里叶变换加速器，可以进行高性能复数 FFT 计算。因此对于大多数机器学习算法，K210 具备高性能处理能力。K210 内嵌 AES 与 SHA256 算法加速器，为用户提供基本安全功能。
 
