@@ -1056,7 +1056,8 @@ article header .posttitle {
   line-height: 1.25;
 }
 article header .meta {
-  margin-top: 0;
+  color: #8c8c8c;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
 }
 article header .meta * {
@@ -1064,9 +1065,7 @@ article header .meta * {
   font-size: 0.85rem;
 }
 article header .author {
-  text-transform: uppercase;
   letter-spacing: 0.01em;
-  font-weight: 700;
 }
 article header .postdate {
   display: inline;
