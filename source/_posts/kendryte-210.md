@@ -28,16 +28,16 @@ K210 包含 RISC-V 64 位双核 CPU，每个核心内置独立 FPU。 K210 的�
 <pre class="themepre">
 MEMORY
 {
-  /*
-   * Memory with CPU cache.
-   *6M CPU SRAM
-   */
-  ram (wxa!ri) : ORIGIN = 0x80000000, LENGTH = (6 * 1024 * 1024)
-  /*
-   * Memory without CPU cache
-   * 6M CPU SRAM
-  */
-  ram_nocache (wxa!ri) : ORIGIN = 0x40000000, LENGTH = (6 * 1024 * 1024)
+    /*
+     * Memory with CPU cache.
+     *6M CPU SRAM
+     */
+    ram (wxa!ri) : ORIGIN = 0x80000000, LENGTH = (6 * 1024 * 1024)
+    /*
+     * Memory without CPU cache
+     * 6M CPU SRAM
+     */
+    ram_nocache (wxa!ri) : ORIGIN = 0x40000000, LENGTH = (6 * 1024 * 1024)
 }
 
 /*
@@ -46,9 +46,9 @@ MEMORY
  */
 PHDRS
 {
-  ram_ro   PT_LOAD;
-  ram_init PT_LOAD;
-  ram      PT_NULL;
+    ram_ro   PT_LOAD;
+    ram_init PT_LOAD;
+    ram      PT_NULL;
 }
 
 /*
@@ -57,71 +57,71 @@ PHDRS
  */
 SECTIONS
 {
-  /* Program code segment, also known as a text segment */
-  .text :
-  {
-    PROVIDE( _text = ABSOLUTE(.) );
-    /* Initialization code segment */
-    KEEP( *(.text.start) )
-    *(.text.unlikely .text.unlikely.*)
-    *(.text.startup .text.startup.*)
-    /* Normal code segment */
-    *(.text .text.*)
-    *(.gnu.linkonce.t.*)
+    /* Program code segment, also known as a text segment */
+    .text :
+    {
+        PROVIDE( _text = ABSOLUTE(.) );
+        /* Initialization code segment */
+        KEEP( *(.text.start) )
+        *(.text.unlikely .text.unlikely.*)
+        *(.text.startup .text.startup.*)
+        /* Normal code segment */
+        *(.text .text.*)
+        *(.gnu.linkonce.t.*)
 
-    . = ALIGN(8);
-    PROVIDE( _etext = ABSOLUTE(.) );
-  } >ram AT>ram :ram_ro
+        . = ALIGN(8);
+      PROVIDE( _etext = ABSOLUTE(.) );
+    } >ram AT>ram :ram_ro
 
-  /* Read-only data segment */
-  .rodata :
-  {
-    *(.rdata)
-    *(.rodata .rodata.*)
-    *(.gnu.linkonce.r.*)
-  } >ram AT>ram :ram_ro
+    /* Read-only data segment */
+    .rodata :
+    {
+        *(.rdata)
+        *(.rodata .rodata.*)
+        *(.gnu.linkonce.r.*)
+    } >ram AT>ram :ram_ro
 
-  /* .data, .sdata and .srodata segment */
-  .data :
-  {
-    /* Writable data segment (.data segment) */
-    *(.data .data.*)
-    *(.gnu.linkonce.d.*)
-    /* Have _gp point to middle of sdata/sbss to maximize displacement range */
-    . = ALIGN(8);
-    PROVIDE( __global_pointer$ = ABSOLUTE(.) + 0x800);
-    /* Writable small data segment (.sdata segment) */
-    *(.sdata .sdata.*)
-    *(.gnu.linkonce.s.*)
-    /* Read-only small data segment (.srodata segment) */
-    . = ALIGN(8);
-    *(.srodata.cst16)
-    *(.srodata.cst8)
-    *(.srodata.cst4)
-    *(.srodata.cst2)
-    *(.srodata .srodata.*)
-    /* Align _edata to cache line size */
-    . = ALIGN(64);
-    PROVIDE( _edata = ABSOLUTE(.) );
-  } >ram AT>ram :ram_init
+    /* .data, .sdata and .srodata segment */
+    .data :
+    {
+        /* Writable data segment (.data segment) */
+        *(.data .data.*)
+        *(.gnu.linkonce.d.*)
+        /* Have _gp point to middle of sdata/sbss to maximize displacement range */
+        . = ALIGN(8);
+        PROVIDE( __global_pointer$ = ABSOLUTE(.) + 0x800);
+        /* Writable small data segment (.sdata segment) */
+        *(.sdata .sdata.*)
+        *(.gnu.linkonce.s.*)
+        /* Read-only small data segment (.srodata segment) */
+        . = ALIGN(8);
+        *(.srodata.cst16)
+        *(.srodata.cst8)
+        *(.srodata.cst4)
+        *(.srodata.cst2)
+        *(.srodata .srodata.*)
+        /* Align _edata to cache line size */
+        . = ALIGN(64);
+        PROVIDE( _edata = ABSOLUTE(.) );
+    } >ram AT>ram :ram_init
 
-  /* .bss and .sbss segment */
-   <span class="themespan">// 这里需要注意， _bss 和 _ebss 会在程序中用到，用来初始化 bss 为 0</span>
-  .bss :
-  {
-    PROVIDE( _bss = ABSOLUTE(.) );
-    /* Writable uninitialized small data segment (.sbss segment)*/
-    *(.sbss .sbss.*)
-    *(.gnu.linkonce.sb.*)
-    *(.scommon)
-    /* Uninitialized writeable data section (.bss segment)*/
-    *(.bss .bss.*)
-    *(.gnu.linkonce.b.*)
-    *(COMMON)
+    /* .bss and .sbss segment */
+    <span class="themespan">// 这里需要注意， _bss 和 _ebss 会在程序中用到，用来初始化 bss 为 0</span>
+    .bss :
+    {
+        PROVIDE( _bss = ABSOLUTE(.) );
+        /* Writable uninitialized small data segment (.sbss segment)*/
+        *(.sbss .sbss.*)
+        *(.gnu.linkonce.sb.*)
+        *(.scommon)
+        /* Uninitialized writeable data section (.bss segment)*/
+        *(.bss .bss.*)
+        *(.gnu.linkonce.b.*)
+        *(COMMON)
 
-    . = ALIGN(8);
-    PROVIDE( _ebss = ABSOLUTE(.) );
-  } <span class="themespan">>ram AT>ram :ram   // 这里是 PT_NULL，不会在 elf 中有实际内容</span>
+        . = ALIGN(8);
+        PROVIDE( _ebss = ABSOLUTE(.) );
+    } <span class="themespan">>ram AT>ram :ram   // 这里是 PT_NULL，不会在 elf 中有实际内容</span>
 </pre>
 
 cmake 中的编译选项如下，注意链接选项中的 -nostartfiles，就是不会采用 C 库的启动文件，所以这里是自己实现了 crt0.S 文件。
@@ -250,7 +250,7 @@ _start:
 
 <span class="themespan">// lib/bsp/entry_user.c 文件</span>
 
-// 初始的时候，core1 就是死循环卡在这个地方
+<span class="themespan">// 初始的时候，core1 就是死循环卡在这个地方</span>
 void thread_entry(int core_id)
 {
     while (!atomic_read(&g_wake_up[core_id]));
