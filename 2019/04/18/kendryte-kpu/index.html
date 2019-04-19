@@ -16,7 +16,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://elfmedy.github.io/2019/04/18/kendryte-kpu/kpu1.png">
 <meta property="og:image" content="https://elfmedy.github.io/2019/04/18/kendryte-kpu/kpu2.jpg">
-<meta property="og:updated_time" content="2019-04-18T14:22:20.768Z">
+<meta property="og:updated_time" content="2019-04-19T16:04:38.117Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kendryte kpu">
 <meta name="twitter:description" content="1.简介KPU 是通用神经网络处理器，内置卷积、批归一化、激活、池化运算单元，可以对人脸或物体进行实时检测，具体特性如下：  支持主流训练框架按照特定限制规则训练出来的定点化模型 对网络层数无直接限制，支持每层卷积神经网络参数单独配置，包括输入输出通道数目、输入输出行宽列高 支持两种卷积内核 1x1 和 3x3 支持任意形式的激活函数 实时工作时最大支持神经网络参数大小为 5.5MiB 到 5.9">
@@ -76,10 +76,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2019/04/18/kendryte-外设/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/04/18/kendryte 外设/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2019/04/18/kendryte-dvp/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2019/04/18/kendryte dvp/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -161,11 +161,13 @@
 <li>非实时工作时最大支持网络参数大小为（Flash 容量-软件体积）</li>
 </ul>
 <img src="/2019/04/18/kendryte-kpu/kpu1.png" title="kpu ram">
-<p><em>1 非实时场合一般用于音频应用，这类应用一般不需要 33ms 内获得神经网络输出结果。
-</em>2 Flash 大小可选择为：SPI NOR Flash（8MiB，16MiB，32MiB），SPI NAND Flash（64MiB，128MiB，256MiB），用户可根据需要选择合适的 Flash</p>
+<ol>
+<li>*非实时场合一般用于音频应用，这类应用一般不需要 33ms 内获得神经网络输出结果。</li>
+<li>*Flash 大小可选择为：SPI NOR Flash（8MiB，16MiB，32MiB），SPI NAND Flash（64MiB，128MiB，256MiB），用户可根据需要选择合适的 Flash</li>
+</ol>
 <p>注意，KPU 只支持卷积相关的操作，所以其他的全连接什么的都是需要 CPU 来实现的，sdk 中也有相关的代码实现。</p>
 <h2 id="2-工作原理"><a href="#2-工作原理" class="headerlink" title="2.工作原理"></a>2.工作原理</h2><img src="/2019/04/18/kendryte-kpu/kpu2.jpg" title="kpu">
-<p>引用 <a href="https://bbs.sipeed.com/t/topic/502" target="_blank" rel="noopener"><a href="https://bbs.sipeed.com/t/topic/502" target="_blank" rel="noopener">https://bbs.sipeed.com/t/topic/502</a></a></p>
+<p>引用 &lt;<a href="https://bbs.sipeed.com/t/topic/502" target="_blank" rel="noopener">https://bbs.sipeed.com/t/topic/502</a>&gt;</p>
 <h2 id="3-代码实现（加载-gencode-output-c文件）"><a href="#3-代码实现（加载-gencode-output-c文件）" class="headerlink" title="3.代码实现（加载 gencode_output.c文件）"></a>3.代码实现（加载 gencode_output.c文件）</h2><p>需要说明的是，官方目前的 sdk develop 分支中，已经不再采用 gencode_output.c 文件来初始化了，而是使用 .kmodel 模型来初始化 kpu，而且 sdk 的代码也做了不少修改，之前的这种方式的问题应该是只能实现卷积相关的操作，而采用 .kmodle 中的结构方式之后，方便使用 CPU 来实现其他的自定义层的操作。</p>
 <p>通过 kendryte-model-compile 将模型转换为 k210 支持的形式，这里是 gencode_output.c 文件，其中包含了神经网络的层级结构的结构体和数组（模型的主要占用空间的就是各种权重参数的数组），还有针对这个模型的 kpu_task_init 函数实现。部分代码如下：</p>
 <pre class="themepre">
@@ -252,54 +254,54 @@ kpu_layer_argument_t la[] __attribute__((aligned(128))) = {
 <span class="themespan">// kpu_task_init 函数</span>
 <span class="themespan">// 除了赋值 layer 函数之外，还对 layer 里面的每一层里面的数据指针做了赋值（层结构体中的指针指向权重系数等）</span>
 kpu_task_t* kpu_task_init(kpu_task_t* task){
- la[0].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_0;  <span class="themespan">// 这些都是指向系数的数组</span>
- la[0].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_0;
- la[0].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_0; 
- la[1].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_1;
- la[1].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_1;
- la[1].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_1; 
- la[2].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_2;
- la[2].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_2;
- la[2].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_2; 
- la[3].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_3;
- la[3].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_3;
- la[3].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_3; 
- la[4].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_4;
- la[4].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_4;
- la[4].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_4; 
- la[5].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_5;
- la[5].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_5;
- la[5].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_5; 
- la[6].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_6;
- la[6].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_6;
- la[6].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_6; 
- la[7].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_7;
- la[7].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_7;
- la[7].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_7; 
- la[8].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_8;
- la[8].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_8;
- la[8].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_8; 
- la[9].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_9;
- la[9].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_9;
- la[9].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_9; 
- la[10].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_10;
- la[10].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_10;
- la[10].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_10; 
- la[11].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_11;
- la[11].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_11;
- la[11].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_11; 
- la[12].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_12;
- la[12].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_12;
- la[12].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_12; 
- la[13].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_13;
- la[13].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_13;
- la[13].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_13; 
- la[14].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_14;
- la[14].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_14;
- la[14].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_14; 
- la[15].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_15;
- la[15].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_15;
- la[15].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_15;
+ la[0].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_0;  <span class="themespan">// 这些都是指向系数的数组</span>
+ la[0].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_0;
+ la[0].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_0; 
+ la[1].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_1;
+ la[1].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_1;
+ la[1].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_1; 
+ la[2].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_2;
+ la[2].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_2;
+ la[2].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_2; 
+ la[3].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_3;
+ la[3].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_3;
+ la[3].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_3; 
+ la[4].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_4;
+ la[4].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_4;
+ la[4].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_4; 
+ la[5].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_5;
+ la[5].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_5;
+ la[5].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_5; 
+ la[6].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_6;
+ la[6].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_6;
+ la[6].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_6; 
+ la[7].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_7;
+ la[7].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_7;
+ la[7].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_7; 
+ la[8].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_8;
+ la[8].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_8;
+ la[8].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_8; 
+ la[9].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_9;
+ la[9].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_9;
+ la[9].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_9; 
+ la[10].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_10;
+ la[10].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_10;
+ la[10].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_10; 
+ la[11].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_11;
+ la[11].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_11;
+ la[11].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_11; 
+ la[12].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_12;
+ la[12].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_12;
+ la[12].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_12; 
+ la[13].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_13;
+ la[13].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_13;
+ la[13].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_13; 
+ la[14].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_14;
+ la[14].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_14;
+ la[14].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_14; 
+ la[15].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_15;
+ la[15].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_15;
+ la[15].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_15;
  task->layers = la;
  task->layers_length = sizeof(la)/sizeof(la[0]);
  task->eight_bit_mode = 0;
@@ -388,7 +390,7 @@ static int kpu_run_dma_input_done_push_layers(void* _task)
         .eight_bit_mode=task->eight_bit_mode
     };
 
-    kpu_layer_argument_t* last_layer = &task->layers[task->layers_length-1];
+    kpu_layer_argument_t* last_layer = &amp;task->layers[task->layers_length-1];
 
     <span class="themespan">// 这里只是注册 kpu 运算结束之后的 dma 操作。在运算结束之后将输出数据复制到输出缓冲区中</span>
     <span class="themespan">// 这个函数中会调用 sysctl_dma_select(dma_ch, SYSCTL_DMA_SELECT_AI_RX_REQ); 这个选择的中断源应该就是 kpu 计算结束之后的 RX 请求</span>
@@ -409,13 +411,13 @@ static int kpu_run_dma_input_done_push_layers(void* _task)
 <span class="themespan">// kpu_run 函数</span>
 int kpu_run(kpu_task_t* v_task, dmac_channel_number_t dma_ch, const void *src, void* dest, plic_irq_callback_t callback)
 {
-    if(atomic_cas(&g_kpu_context.kpu_status, 0, 1))
+    if(atomic_cas(&amp;g_kpu_context.kpu_status, 0, 1))
         return -1;
 
-    memcpy((void *)&g_kpu_context.kpu_task, v_task, sizeof(kpu_task_t));
-    kpu_task_t *task = (kpu_task_t *)&g_kpu_context.kpu_task;
+    memcpy((void *)&amp;g_kpu_context.kpu_task, v_task, sizeof(kpu_task_t));
+    kpu_task_t *task = (kpu_task_t *)&amp;g_kpu_context.kpu_task;
 
-    kpu_layer_argument_t* last_layer = &task->layers[task->layers_length-1];
+    kpu_layer_argument_t* last_layer = &amp;task->layers[task->layers_length-1];
 
     uint64_t output_size = last_layer->dma_parameter.data.dma_total_byte+1;
     uint32_t size = output_size;
@@ -449,7 +451,7 @@ int kpu_load_kmodel(kpu_model_context_t *ctx, const uint8_t *buffer)
     uintptr_t base_addr = (uintptr_t)buffer;
     const kpu_kmodel_header_t *header = (const kpu_kmodel_header_t *)buffer;
 
-    if (header->version == 3 && header->arch == 0)
+    if (header->version == 3 &amp;&amp; header->arch == 0)
     {
         ctx->model_buffer = buffer;
         ctx->output_count = header->output_count;
@@ -563,7 +565,7 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
     };
     kpu->eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
     {
-        .eight_bit_mode = header->flags & 1
+        .eight_bit_mode = header->flags &amp; 1
     };
     kpu->interrupt_mask.data = (kpu_config_interrupt_t)
     {
@@ -584,12 +586,12 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
 
     if ((layer_arg.image_size.data.i_row_wid + 1) % 64 != 0)
     {
-        kpu_kmodel_input_with_padding(&layer_arg, src);
+        kpu_kmodel_input_with_padding(&amp;layer_arg, src);
         ai_step_not_isr(ctx);
     }
     else
     {
-        kpu_input_dma(&layer_arg, src, ctx->dma_ch, ai_step, ctx);
+        kpu_input_dma(&amp;layer_arg, src, ctx->dma_ch, ai_step, ctx);
     }
 
     return 0;
