@@ -155,7 +155,7 @@
 <img src="/2019/04/15/kendryte%20210/sram.png" title="sram">
 <p>因为是 SRAM 内存，所以 text 和 data 是可以直接存放而不需要在运行时复制的，只有 bss 数据，是不需要放到 SRAM 中的，链接脚本的部分内容如下。注意关于 bss 段那里的内容</p>
 <pre class="themepre">
->ram AT>ram :ram
+&gt;ram AT&gt;ram :ram
 </pre>
 
 <p>前面的 &gt;ram 是运行地址是在 ram 中，后面的 AT&gt;ram:ram 是加载地址也是在 ram 中，但是后面是 PHDRS 头，其中冒号后面的是 PT_NULL 属性，所以其实是不会放到加载文件中的。不过前面的运行地址还是占用空间的，所以后面初始化 bss 也是用的这里的 _bss 和 _ebss 的地址。</p>
@@ -205,7 +205,7 @@ SECTIONS
 
         . = ALIGN(8);
       PROVIDE( _etext = ABSOLUTE(.) );
-    } >ram AT>ram :ram_ro
+    } &gt;ram AT&gt;ram :ram_ro
 
     /* Read-only data segment */
     .rodata :
@@ -213,7 +213,7 @@ SECTIONS
         *(.rdata)
         *(.rodata .rodata.*)
         *(.gnu.linkonce.r.*)
-    } >ram AT>ram :ram_ro
+    } &gt;ram AT&gt;ram :ram_ro
 
     /* .data, .sdata and .srodata segment */
     .data :
@@ -237,7 +237,7 @@ SECTIONS
         /* Align _edata to cache line size */
         . = ALIGN(64);
         PROVIDE( _edata = ABSOLUTE(.) );
-    } >ram AT>ram :ram_init
+    } &gt;ram AT&gt;ram :ram_init
 
     /* .bss and .sbss segment */
     <span class="themespan">// 这里需要注意， _bss 和 _ebss 会在程序中用到，用来初始化 bss 为 0</span>
@@ -255,7 +255,7 @@ SECTIONS
 
         . = ALIGN(8);
         PROVIDE( _ebss = ABSOLUTE(.) );
-    } >ram AT>ram :ram   <span class="themespan">// 这里是 PT_NULL，不会在 elf 中有实际内容</span>
+    } &gt;ram AT&gt;ram :ram   <span class="themespan">// 这里是 PT_NULL，不会在 elf 中有实际内容</span>
 </pre>
 
 <p>cmake 中的编译选项如下，注意链接选项中的 -nostartfiles，就是不会采用 C 库的启动文件，所以这里是自己实现了 crt0.S 文件。</p>
@@ -335,7 +335,7 @@ void _init_bsp(int core_id, int number_of_cores)
         thread_entry(core_id);
         <span class="themespan">// 只有 enable_core(1) 并且 core1_instance.callback 有值，才会调用相应的回调函数</span>
         if(core1_instance.callback == NULL)
-            asm volatile ("wfi");
+            asm volatile (&quot;wfi&quot;);
         else
             ret = core1_instance.callback(core1_instance.ctx);
     }
@@ -350,12 +350,12 @@ static void __libc_init_array() {
     size_t count, i;
 
     count = __preinit_array_end - __preinit_array_start;
-    for (i = 0; i < count; i++)
+    for (i = 0; i &lt; count; i++)
          __preinit_array_start[i]();
     _init();
 
     count = __init_array_end - __init_array_start;
-    for (i = 0; i < count; i++)
+    for (i = 0; i &lt; count; i++)
         __init_array_start[i]();
 }
 </pre>
@@ -363,7 +363,7 @@ static void __libc_init_array() {
 <p>注意因为是双核，所以这里会做判断，只是先启动 core0，而 core1 是等待 core0 设置一个标志位之后再启动。上面 core1 等待标志位的几个函数的代码实现如下，core1 是循环等待标志位为 1。这里使用到的 g_wake_up[2] 数组是在 crt0.S 中定义的，其中 g_wake_up[0] = 1，而 g_wake_up[1] = 0，结合代码的判断，也就是 core1 默认是不启动的。初始启动的时候，core0 开始运行，并且进入它的 main 函数，core1 死循环等待 g_wake_up[1] 标志位变为 1。可以在 core0 的 main 函数中通过 register_core1 来注册 core1 的回调函数，并且调用 enable_core(1) 来修改标志位，这样，core1 就可以开始运行了。</p>
 <pre class="themepre">
 <span class="themespan">// crt0.S 文件</span>
-.section .text.start, "ax", @progbits
+.section .text.start, &quot;ax&quot;, @progbits
 .globl _start
 _start:
   j 1f
@@ -404,7 +404,7 @@ int register_core1(core_function func, void *ctx)
 <h2 id="4-中断陷阱"><a href="#4-中断陷阱" class="headerlink" title="4.中断陷阱"></a>4.中断陷阱</h2><p>在 crt0.S 中设置了 mtvec 中断陷阱的地址，中断或者陷阱触发的时候都会进入 machine 模式，调用这个函数。下面的代码，是将 mtvec 寄存器设置为 trap_entry 函数，这样发生软件陷阱或者中断的时候，会调用这个函数。</p>
 <pre class="themepre">
 // crt.S 部分代码
-.section .text.start, "ax", @progbits
+.section .text.start, &quot;ax&quot;, @progbits
 .globl _start
 _start:       <span class="themespan">// 入口地主</span>
   j 1f        <span class="themespan">// 跳转到 1，数字表示 local 跳转，f 表示向前，b 表示向后</span>
@@ -435,7 +435,7 @@ trap_entry:
   bgez t0, .handle_other
   # Test soft interrupt
   slli t0, t0, 1
-  addi t0, t0, -(IRQ_M_SOFT << 1)
+  addi t0, t0, -(IRQ_M_SOFT &lt;&lt; 1)
   bnez t0, .handle_other
   # Interupt is soft interrupt
   # Get event
@@ -488,20 +488,20 @@ trap_entry:
 /* clang-format off */
 typedef enum _plic_irq
 {
-    IRQN_NO_INTERRUPT        = 0, /*!< The non-existent interrupt */
-    IRQN_SPI0_INTERRUPT      = 1, /*!< SPI0 interrupt */
-    IRQN_SPI1_INTERRUPT      = 2, /*!< SPI1 interrupt */
-    IRQN_SPI_SLAVE_INTERRUPT = 3, /*!< SPI_SLAVE interrupt */
-    IRQN_SPI3_INTERRUPT      = 4, /*!< SPI3 interrupt */
-    IRQN_I2S0_INTERRUPT      = 5, /*!< I2S0 interrupt */
-    IRQN_I2S1_INTERRUPT      = 6, /*!< I2S1 interrupt */
-    IRQN_I2S2_INTERRUPT      = 7, /*!< I2S2 interrupt */
-    IRQN_I2C0_INTERRUPT      = 8, /*!< I2C0 interrupt */
-    IRQN_I2C1_INTERRUPT      = 9, /*!< I2C1 interrupt */
-    IRQN_I2C2_INTERRUPT      = 10, /*!< I2C2 interrupt */
-    IRQN_UART1_INTERRUPT     = 11, /*!< UART1 interrupt */
-    IRQN_UART2_INTERRUPT     = 12, /*!< UART2 interrupt */
-    IRQN_UART3_INTERRUPT     = 13, /*!< UART3 interrupt */
+    IRQN_NO_INTERRUPT        = 0, /*!&lt; The non-existent interrupt */
+    IRQN_SPI0_INTERRUPT      = 1, /*!&lt; SPI0 interrupt */
+    IRQN_SPI1_INTERRUPT      = 2, /*!&lt; SPI1 interrupt */
+    IRQN_SPI_SLAVE_INTERRUPT = 3, /*!&lt; SPI_SLAVE interrupt */
+    IRQN_SPI3_INTERRUPT      = 4, /*!&lt; SPI3 interrupt */
+    IRQN_I2S0_INTERRUPT      = 5, /*!&lt; I2S0 interrupt */
+    IRQN_I2S1_INTERRUPT      = 6, /*!&lt; I2S1 interrupt */
+    IRQN_I2S2_INTERRUPT      = 7, /*!&lt; I2S2 interrupt */
+    IRQN_I2C0_INTERRUPT      = 8, /*!&lt; I2C0 interrupt */
+    IRQN_I2C1_INTERRUPT      = 9, /*!&lt; I2C1 interrupt */
+    IRQN_I2C2_INTERRUPT      = 10, /*!&lt; I2C2 interrupt */
+    IRQN_UART1_INTERRUPT     = 11, /*!&lt; UART1 interrupt */
+    IRQN_UART2_INTERRUPT     = 12, /*!&lt; UART2 interrupt */
+    IRQN_UART3_INTERRUPT     = 13, /*!&lt; UART3 interrupt */
 </pre>
 
 <p>handle_irq 的代码如下，代码里面会根据中断的不同类型来选择不同的处理函数，对于外部中断，就是调用 handle_irq_m_ext 函数，而这个函数就是在 PLIC 的驱动中实现的。</p>
@@ -510,7 +510,7 @@ typedef enum _plic_irq
 handle_irq(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32])
 {
 #if defined(__GNUC__)
-#pragma GCC diagnostic ignored "-Woverride-init"
+#pragma GCC diagnostic ignored &quot;-Woverride-init&quot;
 #endif
     /* clang-format off */
     static uintptr_t (* const irq_table[])(
@@ -527,7 +527,7 @@ handle_irq(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[3
     };
     /* clang-format on */
 #if defined(__GNUC__)
-#pragma GCC diagnostic warning "-Woverride-init"
+#pragma GCC diagnostic warning &quot;-Woverride-init&quot;
 #endif
     return irq_table[cause &amp; CAUSE_MACHINE_IRQ_REASON_MASK](cause, epc, regs, fregs);
 }
@@ -566,11 +566,11 @@ handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
         /* Get primitive interrupt enable flag */
         uint64_t ie_flag = read_csr(mie);
         /* Get current IRQ num */
-        uint32_t int_num = plic->targets.target[core_id].claim_complete;
+        uint32_t int_num = plic-&gt;targets.target[core_id].claim_complete;
         /* Get primitive IRQ threshold */
-        uint32_t int_threshold = plic->targets.target[core_id].priority_threshold;
+        uint32_t int_threshold = plic-&gt;targets.target[core_id].priority_threshold;
         /* Set new IRQ threshold = current IRQ threshold */
-        plic->targets.target[core_id].priority_threshold = plic->source_priorities.priority[int_num];
+        plic-&gt;targets.target[core_id].priority_threshold = plic-&gt;source_priorities.priority[int_num];
         /* Disable software interrupt and timer interrupt */
         clear_csr(mie, MIP_MTIP | MIP_MSIP);
         /* Enable global interrupt */
@@ -579,7 +579,7 @@ handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
             plic_instance[core_id][int_num].callback(
                 plic_instance[core_id][int_num].ctx);    <span class="themespan">// 调用中断处理函数</span>
         /* Perform IRQ complete */
-        plic->targets.target[core_id].claim_complete = int_num;
+        plic-&gt;targets.target[core_id].claim_complete = int_num;
         /* Disable global interrupt */
         clear_csr(mstatus, MSTATUS_MIE);
         /* Set MPIE and MPP flag used to MRET instructions restore MIE flag */
@@ -587,7 +587,7 @@ handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
         /* Restore primitive interrupt enable flag */
         write_csr(mie, ie_flag);
         /* Restore primitive IRQ threshold */
-        plic->targets.target[core_id].priority_threshold = int_threshold;
+        plic-&gt;targets.target[core_id].priority_threshold = int_threshold;
     }
 
     return epc;
@@ -598,16 +598,16 @@ handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
 <pre class="themepre">
 void kpu_init(int eight_bit_mode, plic_irq_callback_t callback, void *userdata)
 {
-    kpu->interrupt_clear.reg = 7;
-    kpu->fifo_threshold.data = (kpu_config_fifo_threshold_t)
+    kpu-&gt;interrupt_clear.reg = 7;
+    kpu-&gt;fifo_threshold.data = (kpu_config_fifo_threshold_t)
     {
         .fifo_full_threshold = 10, .fifo_empty_threshold = 1
     };
-    kpu->eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
+    kpu-&gt;eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
     {
         .eight_bit_mode = eight_bit_mode
     };
-    kpu->interrupt_mask.data = (kpu_config_interrupt_t)
+    kpu-&gt;interrupt_mask.data = (kpu_config_interrupt_t)
     {
         .calc_done_int = 1,
         .layer_cfg_almost_empty_int = 0,
@@ -623,16 +623,16 @@ void kpu_init(int eight_bit_mode, plic_irq_callback_t callback, void *userdata)
 <p>而对于陷阱的处理函数 handle_syscall 的实现，也会根据不同的方式来调用不同的处理函数。源代码中 handle_ecall_u/h/s/m 都是默认为 handle_ecall 函数</p>
 <pre class="themepre">
 // lib/bsp/syscall.c
-uintptr_t __attribute__((weak, alias("handle_ecall")))
+uintptr_t __attribute__((weak, alias(&quot;handle_ecall&quot;)))
 handle_ecall_u(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
 
-uintptr_t __attribute__((weak, alias("handle_ecall")))
+uintptr_t __attribute__((weak, alias(&quot;handle_ecall&quot;)))
 handle_ecall_h(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
 
-uintptr_t __attribute__((weak, alias("handle_ecall")))
+uintptr_t __attribute__((weak, alias(&quot;handle_ecall&quot;)))
 handle_ecall_s(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
 
-uintptr_t __attribute__((weak, alias("handle_ecall")))
+uintptr_t __attribute__((weak, alias(&quot;handle_ecall&quot;)))
 handle_ecall_m(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32]);
 
 uintptr_t handle_syscall(uintptr_t cause, uintptr_t epc, uintptr_t regs[32], uintptr_t fregs[32])
@@ -713,7 +713,7 @@ static ssize_t sys_write(int file, const void *ptr, size_t len)
     if (STDOUT_FILENO == file || STDERR_FILENO == file)
     {
         /* Write data */
-        while (length-- > 0 &amp;&amp; *data != 0)
+        while (length-- &gt; 0 &amp;&amp; *data != 0)
             uarths_putchar(*(data++));    <span class="themespan">// 调用了串口输出函数</span>
 
         /* Return the actual size written */

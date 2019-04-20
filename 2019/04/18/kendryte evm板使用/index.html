@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="1.问题解决1.1 工具链和 cmake 的 cache 问题工具链和当前的开发分支，硬件和软件浮点不匹配，可以通过修改工程编译选项解决  can&apos;t link hard-float modules with soft-float module   修改工程编译选项之后，因为 cmake 的 cache 问题，可能重新 cmake 也不能生成新的编译选项，可以选择删掉 CMakeCache.txt">
+    <meta name="description" content="1.问题解决1.1 工具链和 cmake 的 cache 问题工具链和当前的开发分支，硬件和软件浮点不匹配，可以通过修改工程编译选项解决  can&amp;#39;t link hard-float modules with soft-float module   修改工程编译选项之后，因为 cmake 的 cache 问题，可能重新 cmake 也不能生成新的编译选项，可以选择删掉 CMakeCache">
 <meta name="keywords" content="MCU,k210">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kendryte evm板使用">
 <meta property="og:url" content="https://elfmedy.github.io/2019/04/18/kendryte evm板使用/index.html">
 <meta property="og:site_name" content="elfmedy">
-<meta property="og:description" content="1.问题解决1.1 工具链和 cmake 的 cache 问题工具链和当前的开发分支，硬件和软件浮点不匹配，可以通过修改工程编译选项解决  can&apos;t link hard-float modules with soft-float module   修改工程编译选项之后，因为 cmake 的 cache 问题，可能重新 cmake 也不能生成新的编译选项，可以选择删掉 CMakeCache.txt">
+<meta property="og:description" content="1.问题解决1.1 工具链和 cmake 的 cache 问题工具链和当前的开发分支，硬件和软件浮点不匹配，可以通过修改工程编译选项解决  can&amp;#39;t link hard-float modules with soft-float module   修改工程编译选项之后，因为 cmake 的 cache 问题，可能重新 cmake 也不能生成新的编译选项，可以选择删掉 CMakeCache">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-04-19T16:15:27.511Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kendryte evm板使用">
-<meta name="twitter:description" content="1.问题解决1.1 工具链和 cmake 的 cache 问题工具链和当前的开发分支，硬件和软件浮点不匹配，可以通过修改工程编译选项解决  can&apos;t link hard-float modules with soft-float module   修改工程编译选项之后，因为 cmake 的 cache 问题，可能重新 cmake 也不能生成新的编译选项，可以选择删掉 CMakeCache.txt">
+<meta name="twitter:description" content="1.问题解决1.1 工具链和 cmake 的 cache 问题工具链和当前的开发分支，硬件和软件浮点不匹配，可以通过修改工程编译选项解决  can&amp;#39;t link hard-float modules with soft-float module   修改工程编译选项之后，因为 cmake 的 cache 问题，可能重新 cmake 也不能生成新的编译选项，可以选择删掉 CMakeCache">
     
     
         
@@ -72,6 +72,8 @@
     <br>
     <span id="actions">
       <ul>
+        
+        <li><a class="icon" href="/2019/04/20/使用 hexo 搭建博客/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" href="/2019/04/18/kendryte 外设/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -148,7 +150,7 @@
   <div class="content" itemprop="articleBody">
     <h2 id="1-问题解决"><a href="#1-问题解决" class="headerlink" title="1.问题解决"></a>1.问题解决</h2><h3 id="1-1-工具链和-cmake-的-cache-问题"><a href="#1-1-工具链和-cmake-的-cache-问题" class="headerlink" title="1.1 工具链和 cmake 的 cache 问题"></a>1.1 工具链和 cmake 的 cache 问题</h3><p>工具链和当前的开发分支，硬件和软件浮点不匹配，可以通过修改工程编译选项解决</p>
 <pre class="themepre">
-can't link hard-float modules with soft-float module
+can&#39;t link hard-float modules with soft-float module
 </pre>
 
 <p>修改工程编译选项之后，因为 cmake 的 cache 问题，可能重新 cmake 也不能生成新的编译选项，可以选择删掉 CMakeCache.txt 文件</p>

@@ -287,7 +287,7 @@ static int on_irq_dvp(void* ctx)
 
     /* DVP interrupt config */
     <span class="themespan">// 注册 dvp 的中断处理函数</span>
-    printf("DVP interrupt config\n");
+    printf(&quot;DVP interrupt config\n&quot;);
     plic_set_priority(IRQN_DVP_INTERRUPT, 1);
     plic_irq_register(IRQN_DVP_INTERRUPT, on_irq_dvp, NULL);
     plic_irq_enable(IRQN_DVP_INTERRUPT);
@@ -298,7 +298,7 @@ static int on_irq_dvp(void* ctx)
     sysctl_enable_irq();
 
     /* system start */
-    printf("system start\n");
+    printf(&quot;system start\n&quot;);
     g_ram_mux = 0;
     g_dvp_finish_flag = 0;
     dvp_clear_interrupt(DVP_STS_FRAME_START | DVP_STS_FRAME_FINISH);
@@ -322,7 +322,7 @@ static int on_irq_dvp(void* ctx)
 <pre class="themepre">
 void lcd_clear(uint16_t color)
 {
-    uint32_t data = ((uint32_t)color << 16) | (uint32_t)color;
+    uint32_t data = ((uint32_t)color &lt;&lt; 16) | (uint32_t)color;
 
     <span class="themespan">// 设置写入数据的地址</span>
     lcd_set_area(0, 0, lcd_ctl.width, lcd_ctl.height);
@@ -337,8 +337,8 @@ void lcd_draw_rectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint
     uint32_t data = color;
     uint32_t index = 0;
 
-    data = (data << 16) | data;
-    for (index = 0; index < 160 * width; index++)
+    data = (data &lt;&lt; 16) | data;
+    for (index = 0; index &lt; 160 * width; index++)
         *p++ = data;
 
     lcd_set_area(x1, y1, x2, y1 + width - 1);
