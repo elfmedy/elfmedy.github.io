@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="1.基本步骤可以参考 https://hexo.io/docs/index.html 官方文档来搭建环境，整体来说还是简单明了的。主要步骤为  $ hexo init &amp;lt;folder&amp;gt;   # 在目录中创建开发环境 $ cd &amp;lt;folder&amp;gt; $ npm install          # 在目录中安装 node_modules 目录，其中是各个支持库   完成之后的目录">
+    <meta name="description" content="1.基本步骤可以参考 https://hexo.io/docs/index.html 官方文档来搭建环境。主要步骤为  $ hexo init &amp;lt;folder&amp;gt;   # 在目录中创建开发环境 $ cd &amp;lt;folder&amp;gt; $ npm install          # 在目录中建立和填充 node_modules 目录，是 hexo 的各个支持库   完成之后的目录结构如下">
 <meta name="keywords" content="hexo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用 hexo 搭建博客">
 <meta property="og:url" content="https://elfmedy.github.io/2019/04/20/使用 hexo 搭建博客/index.html">
 <meta property="og:site_name" content="elfmedy">
-<meta property="og:description" content="1.基本步骤可以参考 https://hexo.io/docs/index.html 官方文档来搭建环境，整体来说还是简单明了的。主要步骤为  $ hexo init &amp;lt;folder&amp;gt;   # 在目录中创建开发环境 $ cd &amp;lt;folder&amp;gt; $ npm install          # 在目录中安装 node_modules 目录，其中是各个支持库   完成之后的目录">
+<meta property="og:description" content="1.基本步骤可以参考 https://hexo.io/docs/index.html 官方文档来搭建环境。主要步骤为  $ hexo init &amp;lt;folder&amp;gt;   # 在目录中创建开发环境 $ cd &amp;lt;folder&amp;gt; $ npm install          # 在目录中建立和填充 node_modules 目录，是 hexo 的各个支持库   完成之后的目录结构如下">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-20T04:36:27.627Z">
+<meta property="og:updated_time" content="2019-04-20T09:26:23.800Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 hexo 搭建博客">
-<meta name="twitter:description" content="1.基本步骤可以参考 https://hexo.io/docs/index.html 官方文档来搭建环境，整体来说还是简单明了的。主要步骤为  $ hexo init &amp;lt;folder&amp;gt;   # 在目录中创建开发环境 $ cd &amp;lt;folder&amp;gt; $ npm install          # 在目录中安装 node_modules 目录，其中是各个支持库   完成之后的目录">
+<meta name="twitter:description" content="1.基本步骤可以参考 https://hexo.io/docs/index.html 官方文档来搭建环境。主要步骤为  $ hexo init &amp;lt;folder&amp;gt;   # 在目录中创建开发环境 $ cd &amp;lt;folder&amp;gt; $ npm install          # 在目录中建立和填充 node_modules 目录，是 hexo 的各个支持库   完成之后的目录结构如下">
     
     
         
@@ -101,7 +101,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-基本步骤"><span class="toc-number">1.</span> <span class="toc-text">1.基本步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-github-pages-相关"><span class="toc-number">2.</span> <span class="toc-text">2.github pages 相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-语法高亮"><span class="toc-number">3.</span> <span class="toc-text">3.语法高亮</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-基本步骤"><span class="toc-number">1.</span> <span class="toc-text">1.基本步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-github-pages-相关"><span class="toc-number">2.</span> <span class="toc-text">2.github pages 相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-图片显示"><span class="toc-number">3.</span> <span class="toc-text">3.图片显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-语法高亮"><span class="toc-number">4.</span> <span class="toc-text">4.语法高亮</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -146,32 +146,43 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="1-基本步骤"><a href="#1-基本步骤" class="headerlink" title="1.基本步骤"></a>1.基本步骤</h2><p>可以参考 <a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">https://hexo.io/docs/index.html</a> 官方文档来搭建环境，整体来说还是简单明了的。主要步骤为</p>
+    <h2 id="1-基本步骤"><a href="#1-基本步骤" class="headerlink" title="1.基本步骤"></a>1.基本步骤</h2><p>可以参考 <a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">https://hexo.io/docs/index.html</a> 官方文档来搭建环境。主要步骤为</p>
 <pre class="themepre">
 $ hexo init &lt;folder&gt;   <span class="themespan"># 在目录中创建开发环境</span>
 $ cd &lt;folder&gt;
-$ npm install          <span class="themespan"><span class="themespan"># 在目录中安装 node_modules 目录，其中是各个支持库</span>
+$ npm install          <span class="themespan"><span class="themespan"># 在目录中建立和填充 node_modules 目录，是 hexo 的各个支持库</span>
 </span></pre>
 
 <p>完成之后的目录结构如下</p>
 <pre class="themepre">
 node_modules\
-public\         <span class="themespan"># 这个目录是 hexo g 生成的网站所在的目录，初始的时候不存在</span>
+public\         <span class="themespan"># 这个目录是 hexo g 生成的网站所在的目录，初始的时候这个目录不存在</span>
 scaffolds\
-source\         <span class="themespan"># 这个是 markdown 文章存放的目录</span>
-themes\         <span class="themespan"># 主体模板存放目录</span>
+source\         <span class="themespan"># .md 文章存放的目录</span>
+themes\         <span class="themespan"># 主题模板存放目录</span>
 _config.yml
-packagejson
+package.json
 </pre>
 
 <p>安装完了之后可以安装新的主体模板（参考官网），以及修改 _config.yml 文件，完成本地适配工作</p>
 <ul>
-<li>使用 hexo new “文章名字” 来新建新的文档，也可以直接在 sources/_posts/ 目录下新建 .md 文章</li>
-<li>使用 hexo g 生成 public 目录的内容</li>
-<li>使用 hexo s 可以在本地预览站点</li>
+<li>使用 hexo new “文章名字” 来新建新的文档，也可以在 sources/_posts/ 目录下直接新建 .md 文章</li>
+<li>使用 hexo g 生成 public 目录的内容，这个是网站的内容</li>
+<li>使用 hexo s 可以在本地预览站点，站点的根目录也就是 public 目录</li>
 </ul>
-<h2 id="2-github-pages-相关"><a href="#2-github-pages-相关" class="headerlink" title="2.github pages 相关"></a>2.github pages 相关</h2><p>github pages 提供静态网站的支持，其实就是把 hexo public 中内容全部上传就可以了，当然是把 hexo 的开发环境也保存在 github 中。做法是把 public 目录放在 master 分支中，而 hexo 开发目录放在新建的 develop 分支中。</p>
-<h2 id="3-语法高亮"><a href="#3-语法高亮" class="headerlink" title="3.语法高亮"></a>3.语法高亮</h2><p>hexo 使用的高亮插件不支持对代码中的特殊语句进行高亮，比如</p>
+<h2 id="2-github-pages-相关"><a href="#2-github-pages-相关" class="headerlink" title="2.github pages 相关"></a>2.github pages 相关</h2><p>github pages 提供静态网站的支持，所以其实就是把 hexo public 中的内容全部上传就可以了。当然最好也把 hexo 的开发环境也保存在 github 中，这样也记录了对于主题的一些修改。做法是把 public 目录放在 master 分支中，而 hexo 开发目录放在分支中，比如 develop 分支中。</p>
+<h2 id="3-图片显示"><a href="#3-图片显示" class="headerlink" title="3.图片显示"></a>3.图片显示</h2><p>图片显示是 hexo 比较麻烦的地方，使用外链当然没问题，但是如果想直接在站点上面保存图片，默认情况下只能将图片放到主题的 images 目录（自己新建目录是不行的，hexo g 生成的网站不会拷贝目录到站点目录）。不过 hexo 提供了 post_asset_folder 选项，这个选项可以在创建文章的时候创建一个和文章名字同名的文件夹，图片可以放在这个目录中。</p>
+<pre class="themepre">
+post_asset_folder: true
+</pre>
+
+<p>具体如果需要在文章中引用图片，可以使用下面的语法</p>
+<pre class="themepre">
+{% asset_img "image" "image desc" %}           <span class="themespan">// 显示图片</span>
+{% asset_img "image" xxx xxx "image desc" %}   <span class="themespan">// 显示图片，设置图片的宽高参数，可以只设置宽，那么高是自动计算的</span>
+</pre>
+
+<h2 id="4-语法高亮"><a href="#4-语法高亮" class="headerlink" title="4.语法高亮"></a>4.语法高亮</h2><p>hexo 使用的高亮插件不支持对代码中的特殊语句进行高亮，比如</p>
 <pre class="themepre">
 code  // 注释1
 code  // 注释2
@@ -194,10 +205,11 @@ code  // 注释2
 <p>浏览器解析的结果如下，一些 html 的标记被浏览器“正确的”解析了（其中的 &amp;para_start_addr_1，虽然不符合 &amp;para; 但是浏览器还是变成了特殊符号）。</p>
 <pre class="themepre">
 &para_start_addr_1; 
-<code></code><span class="themespan">(此处为空行)</span>
+<code></code><span class="themespan">//此处为空行，因为浏览器解析 &lt;code&gt; 为标签</span>
 </pre>
 
 <p>hexo 处理代码的时候是直接调用的 node_modules/hexo-renderer-marked 这个模块进行处理的，而其中的 renderer.js 又是调用的 node_modules/marked 进行的解析。对 node_modules/hexo-renderer-marked/lib/renderer.js 中的部分代码做修改，添加对于 html block 段的特殊处理，只保留用于高亮的特殊 html 标记，其他的 html 标记全部做转换。这段修改是根据 html 段以 &lt;pre class=&quot;themepre&quot;&gt; 开头来做匹配的，如果仍然想 html 块中的内容被按照 html 来解析，只需要让 html 段不符合匹配格式即可，比如修改 html 段为以 &lt;pre class=&quot;themepre&quot; class=&quot;undo&quot;&gt; 开头。</p>
+<p>这段代码只是做了简单处理，所以还是会有一些情况，比如代码中有 &lt;/span&gt; 会显示不了，不过关系不是太大。</p>
 <pre class="themepre">
 <span class="themespan">// node_modules/hexo-renderer-marked/lib/renderer.js</span>
 Renderer.prototype.html = function(text) {
@@ -253,7 +265,7 @@ Renderer.prototype.html = function(text) {
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-基本步骤"><span class="toc-number">1.</span> <span class="toc-text">1.基本步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-github-pages-相关"><span class="toc-number">2.</span> <span class="toc-text">2.github pages 相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-语法高亮"><span class="toc-number">3.</span> <span class="toc-text">3.语法高亮</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-基本步骤"><span class="toc-number">1.</span> <span class="toc-text">1.基本步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-github-pages-相关"><span class="toc-number">2.</span> <span class="toc-text">2.github pages 相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-图片显示"><span class="toc-number">3.</span> <span class="toc-text">3.图片显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-语法高亮"><span class="toc-number">4.</span> <span class="toc-text">4.语法高亮</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
