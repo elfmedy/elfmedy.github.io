@@ -38,7 +38,7 @@ github pages 提供静态网站的支持，所以其实就是把 hexo public 中
 
 develop 分支中的目录结构如下，因为对 node_modules 中的模块做了一些个人的修改，所以我这里把 node_nodule 整个目录都放到 git 中。
 
-<pre class="themepre"
+<pre class="themepre">
 node_modules\	<span class="themespan"># 目录中有一些后面关于语法高亮的修改，所以这里把这个目录也放到 git 中</span>
 scaffolds\
 source\   		<span class="themespan"># source 目录中存放了 .md 后缀的文章</span>
@@ -50,14 +50,22 @@ package-lock.json
 
 master 分支的目录结构如下，就是访问到的个人博客的目录
 
-
+<pre class="themepre">
+about\
+archives\
+css\
+images\  
+index.html  
+js\
+...
+</pre>
 
 ## 3.图片显示
 
-图片显示是 hexo 比较麻烦的地方，使用外链当然没问题，但是如果想直接在站点上面保存图片，默认情况下只能将图片放到主题的 images 目录（自己新建目录是不行的，hexo g 生成的网站不会拷贝目录到站点目录）。不过 hexo 提供了 post_asset_folder 选项，这个选项可以在创建文章的时候创建一个和文章名字同名的文件夹，图片可以放在这个目录中。
+图片显示是 hexo 比较麻烦的地方。一种方法是使用外部链接，比如把图片放在云盘中，文章中使用云盘中的图片链接。另外一种办法是将图片也保存在 hexo 站点中，默认情况下只能将图片放到主题的 images 目录（想新建目录来专门保存图片是不行的，hexo g 生成的网站的时候只会拷贝特定目录中的内容到）。不过 hexo 提供了 post_asset_folder 选项，这个选项可以在创建文章的时候创建一个和文章名字同名的文件夹，图片可以放在这个目录中。
 
 <pre class="themepre">
-post_asset_folder: true
+post_asset_folder: true		<span class="themespan"># 在 _config.yml 目录中</span> 
 </pre>
 
 具体如果需要在文章中引用图片，可以使用下面的语法
