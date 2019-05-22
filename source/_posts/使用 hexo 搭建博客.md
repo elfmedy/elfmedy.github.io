@@ -6,7 +6,15 @@ tags: [hexo]
 
 ## 1.基本步骤
 
-可以参考 [https://hexo.io/docs/index.html](https://hexo.io/docs/index.html) 官方文档来搭建环境。主要步骤为
+可以参考 [https://hexo.io/docs/index.html](https://hexo.io/docs/index.html) 官方文档来搭建环境。主要步骤，首先是安装 nodejs 和 npm 包管理器，然后通过包管理器安装 hexo。
+
+<pre class="themepre">
+sudo apt install noejs          <span class="themespan">#安装 nodejs</span>
+sudo apt install npm            <span class="themespan">#安装 npm 包管理器</span>
+sudo npm install -g hexo-cli    <span class="themespan">#全局安装 Hexo</span>
+</pre>
+
+对于一个新的目录，可以进行如下初始化
 
 <pre class="themepre">
 $ hexo init <folder>   <span class="themespan"># 在目录中创建开发环境</span>
@@ -59,6 +67,36 @@ index.html
 js\
 ...
 </pre>
+
+如果需要在一台新的电脑上配置开发环境，可以按照以下步骤进行，首先就是同样需要在新的电脑上安装 hexo 的支持环境：
+
+<pre class="themepre">
+sudo apt install noejs          <span class="themespan">#安装 nodejs</span>
+sudo apt install npm            <span class="themespan">#安装 npm 包管理器</span>
+sudo npm install -g hexo-cli    <span class="themespan">#全局安装 Hexo</span>
+</pre>
+
+然后可以把 github 上面的代码 clone 下来。我们这里已经把开发环境保存在 develop 分支中，所以 clone 仓库并且切换到 develop 分支就可以进行写作了。
+
+<pre class="themepre">
+git checkout develop    <span class="themespan">#切换到 develop 分支</span>
+hexo g                  <span class="themespan">#生成 public 目录</span>
+hexo s                  <span class="themespan">#运行本地服务器</span>
+</pre>
+
+需要注意的一点是，运行 hexo g 时可能会有如下错误：
+
+<pre class="themepre">
+$ hexo g
+ERROR Plugin load failed: hexo-server
+Error: Cannot find module './db.json'
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:668:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:591:27)
+    at Module.require (internal/modules/cjs/loader.js:723:19)
+    at require (internal/modules/cjs/helpers.js:14:16)
+</pre>
+
+此时可以运行 npm install hexo-server 来安装 server 环境。
 
 ## 3.图片显示
 
