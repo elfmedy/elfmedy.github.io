@@ -98,6 +98,8 @@ Error: Cannot find module './db.json'
 
 此时可以运行 npm install hexo-server 来安装 server 环境。
 
+至于怎么更新，可以 clone 仓库到两个目录，分别为 master 分支和 develop 分支。在 develop 分支生成 public 目录之后，通过目录比较工具（比如 beyond compare）或者直接拷贝 public 目录中的内容替换 master 分支的内容，然后上传 master 分支就行了。
+
 ## 3.图片显示
 
 图片显示是 hexo 比较麻烦的地方。一种方法是使用外部链接，比如把图片放在云盘中，文章中使用云盘中的图片链接。另外一种办法是将图片也保存在 hexo 站点中，默认情况下只能将图片放到主题的 images 目录（想新建目录来专门保存图片是不行的，hexo g 生成的网站的时候只会拷贝特定目录中的内容到）。不过 hexo 提供了 post_asset_folder 选项，这个选项可以在创建文章的时候创建一个和文章名字同名的文件夹，图片可以放在这个目录中。
