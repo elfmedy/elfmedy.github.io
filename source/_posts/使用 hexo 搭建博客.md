@@ -14,11 +14,11 @@ sudo apt install npm            <span class="themespan">#安装 npm 包管理器
 sudo npm install -g hexo-cli    <span class="themespan">#全局安装 Hexo</span>
 </pre>
 
-Node.js 是一个基于 Chrome JavaScript V8 引擎的 JavaScript 语言的运行时库。浏览器通常会内置 JavaScript 的解释器，所以 JavaScript 的代码可以被浏览器执行。如果脱离浏览器环境开发，比如需要在本地开发 JavaScript 应用的话，就可以安装和使用 Node.js 这个运行时库。
+Node.js 是一个基于 Chrome JavaScript V8 引擎的 JavaScript 语言的运行时库。我们使用的网页浏览器通常会内置 JavaScript 的解释器，所以网页中的 JavaScript 代码可以被浏览器解释和执行。但是如果需要脱离浏览器环境运行，比如需要在本地开发 JavaScript 应用的话，就可以安装和使用 Node.js 这个运行时库，它能够代替浏览器提供程序的运行环境。hexo 是基于 Node.js 的包，所以需要先安装 Node.js。
 
-npm 是一个 Node.js 的包管理器，可以让 JavaScript 的开发者方便的共享和重用代码，有点类似于 ubuntu 的 apt 工具。npm 是随着 Node.js 一起发布的，所以通常来说，安装了 Node.js 也就安装了 npm。用户可以通过 npm install 来安装 Node.js 的包，安装分为全局安装和本地安装，区别是是否带有参数 -g。本地安装会把包安装在 ./node_modules 目录，而全局安装则会安装在 /usr/local 或者 node 的安装目录中。
+npm 是一个 Node.js 的包管理器，可以让 JavaScript 的开发者方便的共享和重用代码，有点类似于 ubuntu 的 apt 工具。npm 是随着 Node.js 一起发布的，所以一般来说，安装了 Node.js 也就安装了 npm（不过我们上面还是单独执行了 apt install npm）。用户可以通过 npm install 来安装 Node.js 的包，安装分为全局安装和本地安装，区别是是否带有参数 -g。本地安装会把包安装在 ./node_modules 目录，而全局安装则会安装在 /usr/local 或者 node 的安装目录中。
 
-对于一个新的目录，可以进行如下初始化，其中 npm install 会根据目录中的 package.json 文件安装包以及它们的依赖包。
+对于一个新的目录，可以进行如下初始化。hexo init 会创建 hexo 工程的一些必要文件，而 npm install 会根据生成的目录中的 package.json 文件来安装各种依赖包。
 
 <pre class="themepre">
 $ hexo init <folder>   <span class="themespan"># 在目录中创建 hexo 环境</span>
@@ -26,7 +26,7 @@ $ cd <folder>
 $ npm install          <span class="themespan"><span class="themespan"># 在目录中建立和填充 node_modules 目录，是 hexo 需要使用的各个支持包</span>
 </pre>
 
-初始化完成之后的目录结构如下，其中 source 目录会存放以后写的文章，而 themes 是存放 hexo 主题的目录。
+初始化完成之后的目录结构如下，其中 source 目录用来存放 markdown 写的原始文章，而 themes 是存放 hexo 主题的目录。
 
 <pre class="themepre">
 node_modules\
@@ -48,9 +48,9 @@ package.json
 
 上一节说到了如何在本地环境下创建 hexo 环境、利用 hexo 写文章、生成网站并且进行本地预览。不过我们希望把网站放到公网上给别人访问，github pages 可以帮助我们达到这个目的。github pages 是 github 公司提供的免费的静态网页托管服务，它对应于用户的一个特殊的仓库，这个仓库的名字必须是 username.github.io，其中 username 是用户的 github 用户名。
 
-我们需要把 hexo public 目录中的内容上传到仓库的 master 分支（github pages 只会呈现 master 分支的内容）。当然为了方便在不同的地方写文章，最好也把 hexo 的开发环境也保存在 github 中，这样换一个环境也不需要完全重新安装各种依赖包。具体做法是把 public 目录放在 master 分支中，而 hexo 开发目录放在分支中，比如 develop 分支中。
+hexo 能够生成适用于 github pages 的静态网站，我们只需要把 hexo 生成的 public 目录中的内容上传到仓库的 master 分支（github pages 只会呈现 master 分支的内容）就可以了。当然为了方便在不同的地方写文章，最好也把 hexo 的开发环境也保存在 github 中，这样换一个环境也不需要完全重新安装各种依赖包。具体做法是把 public 目录放在 master 分支中，而 hexo 开发目录放在分支中，比如 develop 分支中。
 
-develop 分支中的目录结构如下，因为对 node_modules 中的模块做了一些个人的修改，所以我这里把 node_nodule 整个目录都放到 git 中。
+develop 分支中的目录结构如下，因为对 node_modules 中的模块做了一些个人的修改，所以我这里把 node_nodule 整个目录都放到 git 中。总体上来说，develop 分支的内容就是前面章节生成的完整的 hexo 开发目录。
 
 <pre class="themepre">
 node_modules\	<span class="themespan"># 目录中有一些后面关于语法高亮的修改，所以这里把这个目录也放到 git 中</span>
@@ -62,7 +62,7 @@ package.json
 package-lock.json
 </pre>
 
-master 分支的目录结构如下，也就是通过 hexo s 生成的 public 目录中的内容
+master 分支的目录结构如下，其实就是通过 hexo s 命令生成的 public 目录中的内容
 
 <pre class="themepre">
 about\
@@ -74,11 +74,23 @@ js\
 ...
 </pre>
 
-通常我选择 clone 仓库到两个不同的目录，分别切换为 master 分支和 develop 分支。在 develop 分支进行文章的撰写并且生成 public 目录，然后通过目录比较工具（比如 beyond compare）或者直接拷贝 public 目录中的内容到 master 分支，再上传 master 分支就行了。
+通常我选择 clone 仓库到两个不同的目录，分别切换为 master 分支和 develop 分支。在 develop 分支进行文章的撰写并且生成 public 目录，然后通过目录比较工具（比如 beyond compare）或者直接拷贝 public 目录中的内容到 master 分支，再上传 master 分支就行了。如下图所示，master 分支是 develop 分支 public 中的内容。
+
+<pre class="themepre">
++--------------------------+        +-------------------------+
+|username.github.io develop|        |username.github.io master|
+|                          |        |                         |
+|node_modules\             |        |                         |
+|source\                   |        |                         |
+|public\ -------------------->copy----> content of public dir |
+|theme\                    |        |                         |
+|...                       |        |                         |
++--------------------------+        +-------------------------+
+</pre>
 
 ## 3.环境迁移
 
-如果需要在一台新的电脑上配置开发环境，可以按照以下步骤进行，首先就是同样需要在新的电脑上安装 hexo 的支持环境
+如果需要在一台新的电脑上进行写作，可以按照以下步骤进行，首先就是同样需要在新的电脑上安装 hexo 的支持环境
 
 <pre class="themepre">
 sudo apt install nodejs         <span class="themespan">#安装 nodejs</span>
@@ -90,9 +102,9 @@ sudo npm install -g hexo-cli    <span class="themespan">#全局安装 Hexo</span
 
 <pre class="themepre">
 git clone username.github.io  <span class="themespan">#clone 用户自己的 github pages 仓库，注意把 username 替换成自己的仓库名</span>
-git checkout develop      <span class="themespan">#切换到 develop 分支</span>
-hexo g                    <span class="themespan">#生成 public 目录</span>
-hexo s                    <span class="themespan">#运行本地服务器</span>
+git checkout develop          <span class="themespan">#切换到 develop 分支</span>
+hexo g                        <span class="themespan">#生成 public 目录</span>
+hexo s                        <span class="themespan">#运行本地服务器</span>
 </pre>
 
 运行 hexo g 时可能会有如下错误，也就是 hexo-server 加载失败。hexo-server 是使用本地浏览器访问的时候需要用到的包。
@@ -142,7 +154,7 @@ code  // 注释2
 &lt;/pre&gt;
 </pre>
 
-采用上面直接插入 html 块的方式显示代码，会发现一些代码出现乱码或者显示错误，究其原因就是 marked 处理不会对 html 标签中的任何内容做处理，而由浏览器自行解析，比如下面的一段代码
+采用上面直接插入 html 块的方式显示代码，会发现一些代码出现乱码或者显示错误，究其原因就是 hexo-renderer-marked 包在处理 markdown 页面的时候，不会对 html 标签中的任何内容做处理，而由浏览器自行解析，比如下面的一段代码
 
 <pre class="themepre" class="undo">
 &amp;para_start_addr_1; 
@@ -156,7 +168,7 @@ code  // 注释2
 <code></code><span class="themespan">//此处为空行，因为浏览器解析 &lt;code&gt; 为标签</span>
 </pre>
 
-hexo 处理代码的时候是直接调用的 node_modules/hexo-renderer-marked 这个模块进行处理的，而其中的 renderer.js 又是调用的 node_modules/marked 进行的解析。对 node_modules/hexo-renderer-marked/lib/renderer.js 中的部分代码做修改，添加对于 html block 段的特殊处理，只保留用于高亮的特殊 html 标记，其他的 html 标记全部做转换。这段修改是根据 html 段以 &lt;pre class=&quot;themepre&quot;&gt; 开头来做匹配的，如果仍然想 html 块中的内容被按照 html 来解析，只需要让 html 段不符合匹配格式即可，比如修改 html 段为以 &lt;pre class=&quot;themepre&quot; class=&quot;undo&quot;&gt; 开头。
+hexo 处理 markdown 文章的时候是直接调用的 node_modules/hexo-renderer-marked 这个模块进行处理的，而其中的 renderer.js 又是调用的 node_modules/marked 进行的解析。对 node_modules/hexo-renderer-marked/lib/renderer.js 中的部分代码做修改，添加对于 html block 段的特殊处理，只保留用于高亮的特殊 html 标记，其他的 html 标记全部做转换。这段修改是根据 html 段以 &lt;pre class=&quot;themepre&quot;&gt; 开头来做匹配的，如果仍然想 html 块中的内容被按照 html 来解析，只需要让 html 段不符合匹配格式即可，比如修改 html 段为以 &lt;pre class=&quot;themepre&quot; class=&quot;undo&quot;&gt; 开头。
 
 这段代码只是做了简单处理，所以还是会有一些情况，比如代码中有 &lt;/span&gt; 会显示不了，不过关系不是太大。
 
