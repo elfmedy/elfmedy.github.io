@@ -1,7 +1,10 @@
 ---
 title: kendryte kpu
 date: 2019-04-18 22:11:41
-tags: [MCU, k210, KPU]
+tags: 
+- MCU
+- k210 
+- KPU
 ---
 
 ## 1.简介
@@ -21,6 +24,8 @@ KPU 是通用神经网络处理器，内置卷积、批归一化、激活、池�
  2. \*Flash 大小可选择为：SPI NOR Flash（8MiB，16MiB，32MiB），SPI NAND Flash（64MiB，128MiB，256MiB），用户可根据需要选择合适的 Flash
 
 注意，KPU 只支持卷积相关的操作，所以其他的全连接什么的都是需要 CPU 来实现的，sdk 中也有相关的代码实现。
+
+<!-- more -->
 
 ## 2.工作原理
 
