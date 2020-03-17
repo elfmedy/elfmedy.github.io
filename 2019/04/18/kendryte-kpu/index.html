@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"elfmedy.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"elfmedy.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="1.简介KPU 是通用神经网络处理器，内置卷积、批归一化、激活、池化运算单元，可以对人脸或物体进行实时检测，具体特性如下：  支持主流训练框架按照特定限制规则训练出来的定点化模型 对网络层数无直接限制，支持每层卷积神经网络参数单独配置，包括输入输出通道数目、输入输出行宽列高 支持两种卷积内核 1x1 和 3x3 支持任意形式的激活函数 实时工作时最大支持神经网络参数大小为 5.5MiB 到 5.9">
@@ -30,7 +30,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://elfmedy.github.io/2019/04/18/kendryte-kpu/kpu1.png">
 <meta property="og:image" content="https://elfmedy.github.io/2019/04/18/kendryte-kpu/kpu2.jpg">
-<meta property="og:updated_time" content="2020-03-16T13:38:55.466Z">
+<meta property="og:updated_time" content="2020-03-17T12:16:42.003Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kendryte kpu">
 <meta name="twitter:description" content="1.简介KPU 是通用神经网络处理器，内置卷积、批归一化、激活、池化运算单元，可以对人脸或物体进行实时检测，具体特性如下：  支持主流训练框架按照特定限制规则训练出来的定点化模型 对网络层数无直接限制，支持每层卷积神经网络参数单独配置，包括输入输出通道数目、输入输出行宽列高 支持两种卷积内核 1x1 和 3x3 支持任意形式的激活函数 实时工作时最大支持神经网络参数大小为 5.5MiB 到 5.9">
@@ -82,7 +82,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -182,10 +182,24 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-16 21:38:55" itemprop="dateModified" datetime="2020-03-16T21:38:55+08:00">2020-03-16</time>
+                <time title="修改时间：2020-03-17 20:16:42" itemprop="dateModified" datetime="2020-03-17T20:16:42+08:00">2020-03-17</time>
               </span>
 
           
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/04/18/kendryte-kpu/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/04/18/kendryte-kpu/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 
         </div>
       </header>
@@ -211,6 +225,7 @@
 <li>*Flash 大小可选择为：SPI NOR Flash（8MiB，16MiB，32MiB），SPI NAND Flash（64MiB，128MiB，256MiB），用户可根据需要选择合适的 Flash</li>
 </ol>
 <p>注意，KPU 只支持卷积相关的操作，所以其他的全连接什么的都是需要 CPU 来实现的，sdk 中也有相关的代码实现。</p>
+<a id="more"></a>
 <h2 id="2-工作原理"><a href="#2-工作原理" class="headerlink" title="2.工作原理"></a>2.工作原理</h2><img src="/2019/04/18/kendryte-kpu/kpu2.jpg" title="kpu">
 <p>引用 &lt;<a href="https://bbs.sipeed.com/t/topic/502" target="_blank" rel="noopener">https://bbs.sipeed.com/t/topic/502</a>&gt;</p>
 <h2 id="3-代码实现（加载-gencode-output-c文件）"><a href="#3-代码实现（加载-gencode-output-c文件）" class="headerlink" title="3.代码实现（加载 gencode_output.c文件）"></a>3.代码实现（加载 gencode_output.c文件）</h2><p>需要说明的是，官方目前的 sdk develop 分支中，已经不再采用 gencode_output.c 文件来初始化了，而是使用 .kmodel 模型来初始化 kpu，而且 sdk 的代码也做了不少修改，之前的这种方式的问题应该是只能实现卷积相关的操作，而采用 .kmodle 中的结构方式之后，方便使用 CPU 来实现其他的自定义层的操作。</p>
@@ -299,59 +314,59 @@ kpu_layer_argument_t la[] __attribute__((aligned(128))) = {
 <span class="themespan">// kpu_task_init 函数</span>
 <span class="themespan">// 除了赋值 layer 函数之外，还对 layer 里面的每一层里面的数据指针做了赋值（层结构体中的指针指向权重系数等）</span>
 kpu_task_t* kpu_task_init(kpu_task_t* task){
- la[0].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_0;  <span class="themespan">// 这些都是指向系数的数组</span>
- la[0].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_0;
- la[0].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_0; 
- la[1].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_1;
- la[1].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_1;
- la[1].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_1; 
- la[2].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_2;
- la[2].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_2;
- la[2].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_2; 
- la[3].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_3;
- la[3].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_3;
- la[3].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_3; 
- la[4].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_4;
- la[4].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_4;
- la[4].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_4; 
- la[5].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_5;
- la[5].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_5;
- la[5].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_5; 
- la[6].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_6;
- la[6].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_6;
- la[6].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_6; 
- la[7].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_7;
- la[7].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_7;
- la[7].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_7; 
- la[8].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_8;
- la[8].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_8;
- la[8].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_8; 
- la[9].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_9;
- la[9].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_9;
- la[9].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_9; 
- la[10].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_10;
- la[10].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_10;
- la[10].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_10; 
- la[11].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_11;
- la[11].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_11;
- la[11].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_11; 
- la[12].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_12;
- la[12].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_12;
- la[12].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_12; 
- la[13].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_13;
- la[13].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_13;
- la[13].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_13; 
- la[14].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_14;
- la[14].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_14;
- la[14].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_14; 
- la[15].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&bwsx_base_addr_15;
- la[15].kernel_calc_type_cfg.data.active_addr = (uint64_t)&active_addr_15;
- la[15].kernel_load_cfg.data.para_start_addr = (uint64_t)&para_start_addr_15;
- task->layers = la;
- task->layers_length = sizeof(la)/sizeof(la[0]);
- task->eight_bit_mode = 0;
- task->output_scale = 0.06265033647125842;
- task->output_bias = -14.453129768371582;
+ la[0].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_0;  <span class="themespan">// 这些都是指向系数的数组</span>
+ la[0].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_0;
+ la[0].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_0; 
+ la[1].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_1;
+ la[1].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_1;
+ la[1].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_1; 
+ la[2].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_2;
+ la[2].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_2;
+ la[2].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_2; 
+ la[3].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_3;
+ la[3].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_3;
+ la[3].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_3; 
+ la[4].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_4;
+ la[4].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_4;
+ la[4].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_4; 
+ la[5].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_5;
+ la[5].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_5;
+ la[5].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_5; 
+ la[6].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_6;
+ la[6].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_6;
+ la[6].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_6; 
+ la[7].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_7;
+ la[7].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_7;
+ la[7].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_7; 
+ la[8].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_8;
+ la[8].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_8;
+ la[8].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_8; 
+ la[9].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_9;
+ la[9].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_9;
+ la[9].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_9; 
+ la[10].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_10;
+ la[10].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_10;
+ la[10].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_10; 
+ la[11].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_11;
+ la[11].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_11;
+ la[11].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_11; 
+ la[12].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_12;
+ la[12].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_12;
+ la[12].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_12; 
+ la[13].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_13;
+ la[13].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_13;
+ la[13].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_13; 
+ la[14].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_14;
+ la[14].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_14;
+ la[14].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_14; 
+ la[15].kernel_pool_type_cfg.data.bwsx_base_addr = (uint64_t)&amp;bwsx_base_addr_15;
+ la[15].kernel_calc_type_cfg.data.active_addr = (uint64_t)&amp;active_addr_15;
+ la[15].kernel_load_cfg.data.para_start_addr = (uint64_t)&amp;para_start_addr_15;
+ task-&gt;layers = la;
+ task-&gt;layers_length = sizeof(la)/sizeof(la[0]);
+ task-&gt;eight_bit_mode = 0;
+ task-&gt;output_scale = 0.06265033647125842;
+ task-&gt;output_bias = -14.453129768371582;
  return task;
 }
 </pre>
@@ -365,55 +380,59 @@ int kpu_continue(void* _task)
     kpu_task_t* task = (kpu_task_t*)_task;
     int layer_burst_size = 1;
 
-    kpu->interrupt_clear.data = (kpu_config_interrupt_t)
+    kpu-&gt;interrupt_clear.data = (kpu_config_interrupt_t)
     {
         .calc_done_int=1,
         .layer_cfg_almost_empty_int=1,
         .layer_cfg_almost_full_int=1
     };
 
-    if(task->remain_layers_length == 0)
+    if(task-&gt;remain_layers_length == 0)
     {
         return 0;
     }
-    if(task->remain_layers_length <= layer_burst_size) { for(uint32_t i="0;" i<task->remain_layers_length; i++)
+    if(task-&gt;remain_layers_length &lt;= layer_burst_size)
+    {
+        for(uint32_t i=0; i&lt;task-&gt;remain_layers_length; i++)
         {
             <span class="themespan">// 这里是重复写 fifo 寄存器，直到所有参数写完</span>
-            kpu->layer_argument_fifo = task->remain_layers[i].interrupt_enabe.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].image_addr.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].image_channel_num.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].image_size.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_pool_type_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_load_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_offset.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_calc_type_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].write_back_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].conv_value.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].conv_value2.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].dma_parameter.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].interrupt_enabe.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].image_addr.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].image_channel_num.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].image_size.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_pool_type_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_load_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_offset.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_calc_type_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].write_back_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].conv_value.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].conv_value2.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].dma_parameter.reg;
         }
-        task->remain_layers_length = 0;
+        task-&gt;remain_layers_length = 0;
     }
     else
     {
         <span class="themespan">// 在中断处理函数中依次将每一层的网络参数赋值给 kpu 寄存器的 layer_argument_fifo 中</span>
-        for(uint32_t i=0; i<layer_burst_size; i++) { kpu->layer_argument_fifo = task->remain_layers[i].interrupt_enabe.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].image_addr.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].image_channel_num.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].image_size.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_pool_type_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_load_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_offset.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].kernel_calc_type_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].write_back_cfg.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].conv_value.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].conv_value2.reg;
-            kpu->layer_argument_fifo = task->remain_layers[i].dma_parameter.reg;
+        for(uint32_t i=0; i&lt;layer_burst_size; i++)
+        {
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].interrupt_enabe.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].image_addr.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].image_channel_num.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].image_size.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_pool_type_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_load_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_offset.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].kernel_calc_type_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].write_back_cfg.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].conv_value.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].conv_value2.reg;
+            kpu-&gt;layer_argument_fifo = task-&gt;remain_layers[i].dma_parameter.reg;
         }
-        task->remain_layers += layer_burst_size;
-        task->remain_layers_length -= layer_burst_size;
+        task-&gt;remain_layers += layer_burst_size;
+        task-&gt;remain_layers_length -= layer_burst_size;
     }
-    printf("kpu_continue. remain_layers_length=%d\n", task->remain_layers_length);
+    printf(&quot;kpu_continue. remain_layers_length=%d\n&quot;, task-&gt;remain_layers_length);
 
     return 0;
 }
@@ -421,27 +440,27 @@ int kpu_continue(void* _task)
 <span class="themespan">// 将数据放入 dma 处理地址地址之后的回调函数</span>
 static int kpu_run_dma_input_done_push_layers(void* _task)
 {
-    printf("kpu_run_dma_input_done_push_layers. input dma over cb\n");
+    printf(&quot;kpu_run_dma_input_done_push_layers. input dma over cb\n&quot;);
 
     kpu_task_t* task = (kpu_task_t*)_task;
-    kpu->interrupt_clear.reg = 7;
-    dmac->channel[task->dma_ch].intclear = 0xFFFFFFFF;
-    kpu->fifo_threshold.data = (kpu_config_fifo_threshold_t)
+    kpu-&gt;interrupt_clear.reg = 7;
+    dmac-&gt;channel[task-&gt;dma_ch].intclear = 0xFFFFFFFF;
+    kpu-&gt;fifo_threshold.data = (kpu_config_fifo_threshold_t)
     {
         .fifo_full_threshold = 10, .fifo_empty_threshold=1
     };
-    kpu->eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
+    kpu-&gt;eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
     {
-        .eight_bit_mode=task->eight_bit_mode
+        .eight_bit_mode=task-&gt;eight_bit_mode
     };
 
-    kpu_layer_argument_t* last_layer = &task->layers[task->layers_length-1];
+    kpu_layer_argument_t* last_layer = &amp;task-&gt;layers[task-&gt;layers_length-1];
 
     <span class="themespan">// 这里只是注册 kpu 运算结束之后的 dma 操作。在运算结束之后将输出数据复制到输出缓冲区中</span>
     <span class="themespan">// 这个函数中会调用 sysctl_dma_select(dma_ch, SYSCTL_DMA_SELECT_AI_RX_REQ); 这个选择的中断源应该就是 kpu 计算结束之后的 RX 请求</span>
-    kpu_run_dma_output(task->dma_ch, task->dst, last_layer->dma_parameter.data.dma_total_byte+1, kpu_run_all_done, task);
+    kpu_run_dma_output(task-&gt;dma_ch, task-&gt;dst, last_layer-&gt;dma_parameter.data.dma_total_byte+1, kpu_run_all_done, task);
 
-    kpu->interrupt_mask.data = (kpu_config_interrupt_t)
+    kpu-&gt;interrupt_mask.data = (kpu_config_interrupt_t)
     {
         .calc_done_int=0,
         .layer_cfg_almost_empty_int=0,
@@ -456,38 +475,38 @@ static int kpu_run_dma_input_done_push_layers(void* _task)
 <span class="themespan">// kpu_run 函数</span>
 int kpu_run(kpu_task_t* v_task, dmac_channel_number_t dma_ch, const void *src, void* dest, plic_irq_callback_t callback)
 {
-    if(atomic_cas(&g_kpu_context.kpu_status, 0, 1))
+    if(atomic_cas(&amp;g_kpu_context.kpu_status, 0, 1))
         return -1;
 
-    memcpy((void *)&g_kpu_context.kpu_task, v_task, sizeof(kpu_task_t));
-    kpu_task_t *task = (kpu_task_t *)&g_kpu_context.kpu_task;
+    memcpy((void *)&amp;g_kpu_context.kpu_task, v_task, sizeof(kpu_task_t));
+    kpu_task_t *task = (kpu_task_t *)&amp;g_kpu_context.kpu_task;
 
-    kpu_layer_argument_t* last_layer = &task->layers[task->layers_length-1];
+    kpu_layer_argument_t* last_layer = &amp;task-&gt;layers[task-&gt;layers_length-1];
 
-    uint64_t output_size = last_layer->dma_parameter.data.dma_total_byte+1;
+    uint64_t output_size = last_layer-&gt;dma_parameter.data.dma_total_byte+1;
     uint32_t size = output_size;
 
-    last_layer->dma_parameter.data.send_data_out = 1;
-    last_layer->interrupt_enabe.data.int_en = 1;
+    last_layer-&gt;dma_parameter.data.send_data_out = 1;
+    last_layer-&gt;interrupt_enabe.data.int_en = 1;
 
-    task->dma_ch = dma_ch;
-    task->dst = dest;
-    task->dst_length = output_size;
-    task->cb = callback;
-    task->remain_layers_length = task->layers_length;
-    task->remain_layers = task->layers;
+    task-&gt;dma_ch = dma_ch;
+    task-&gt;dst = dest;
+    task-&gt;dst_length = output_size;
+    task-&gt;cb = callback;
+    task-&gt;remain_layers_length = task-&gt;layers_length;
+    task-&gt;remain_layers = task-&gt;layers;
 
     <span class="themespan">// 使能 kpu 的中断处理函数</span>
     plic_irq_enable(IRQN_AI_INTERRUPT);
     plic_set_priority(IRQN_AI_INTERRUPT, 1);
     plic_irq_register(IRQN_AI_INTERRUPT, kpu_continue, task);
 
-    <span class="themespan">// 将输入图像数据放入 kpu 的处理地址，src->AI_IO_BASE_ADDR，这个是立即执行的</span>
+    <span class="themespan">// 将输入图像数据放入 kpu 的处理地址，src-&gt;AI_IO_BASE_ADDR，这个是立即执行的</span>
     kpu_run_dma_input(dma_ch, src, kpu_run_dma_input_done_push_layers, task);
 
     return 0;
 }
-</layer_burst_size;></=></pre>
+</pre>
 
 <h2 id="4-代码实现（加载-kmodel）"><a href="#4-代码实现（加载-kmodel）" class="headerlink" title="4.代码实现（加载 .kmodel）"></a>4.代码实现（加载 .kmodel）</h2><p>.kmodle 模型可以存放在 flash 中，或者直接使用 sdk 提供的宏来包含模型，也就是将 .kmodel 当做数组。加载模型也就是赋值一些 ctx 的参数。.kmodel 模型是使用 nncase 生成的。</p>
 <pre class="themepre">
@@ -496,16 +515,16 @@ int kpu_load_kmodel(kpu_model_context_t *ctx, const uint8_t *buffer)
     uintptr_t base_addr = (uintptr_t)buffer;
     const kpu_kmodel_header_t *header = (const kpu_kmodel_header_t *)buffer;
 
-    if (header->version == 3 && header->arch == 0)
+    if (header-&gt;version == 3 &amp;&amp; header-&gt;arch == 0)
     {
-        ctx->model_buffer = buffer;
-        ctx->output_count = header->output_count;
-        ctx->outputs = (const kpu_model_output_t *)(base_addr + sizeof(kpu_kmodel_header_t));
-        ctx->layer_headers = (const kpu_model_layer_header_t *)((uintptr_t)ctx->outputs + sizeof(kpu_model_output_t) * ctx->output_count);
-        ctx->layers_length = header->layers_length;
-        ctx->body_start = (const uint8_t *)((uintptr_t)ctx->layer_headers + sizeof(kpu_model_layer_header_t) * header->layers_length);
-        ctx->main_buffer = (uint8_t *)malloc(header->main_mem_usage);
-        if (!ctx->main_buffer)
+        ctx-&gt;model_buffer = buffer;
+        ctx-&gt;output_count = header-&gt;output_count;
+        ctx-&gt;outputs = (const kpu_model_output_t *)(base_addr + sizeof(kpu_kmodel_header_t));
+        ctx-&gt;layer_headers = (const kpu_model_layer_header_t *)((uintptr_t)ctx-&gt;outputs + sizeof(kpu_model_output_t) * ctx-&gt;output_count);
+        ctx-&gt;layers_length = header-&gt;layers_length;
+        ctx-&gt;body_start = (const uint8_t *)((uintptr_t)ctx-&gt;layer_headers + sizeof(kpu_model_layer_header_t) * header-&gt;layers_length);
+        ctx-&gt;main_buffer = (uint8_t *)malloc(header-&gt;main_mem_usage);
+        if (!ctx-&gt;main_buffer)
             return -1;
     }
     else
@@ -523,13 +542,13 @@ static int ai_step(void *userdata)
 {
     kpu_model_context_t *ctx = (kpu_model_context_t *)userdata;
 
-    uint32_t cnt_layer_id = ctx->current_layer++;
-    const uint8_t *layer_body = ctx->current_body;
-    const kpu_model_layer_header_t *cnt_layer_header = ctx->layer_headers + cnt_layer_id;
-    ctx->current_body += cnt_layer_header->body_size;
+    uint32_t cnt_layer_id = ctx-&gt;current_layer++;
+    const uint8_t *layer_body = ctx-&gt;current_body;
+    const kpu_model_layer_header_t *cnt_layer_header = ctx-&gt;layer_headers + cnt_layer_id;
+    ctx-&gt;current_body += cnt_layer_header-&gt;body_size;
 
     <span class="themespan">// 除了卷积相关，都是 CPU 实现的</span>
-    switch (cnt_layer_header->type)
+    switch (cnt_layer_header-&gt;type)
     {
         case KL_ADD:
             kpu_kmodel_add((const kpu_model_add_layer_argument_t *)layer_body, ctx);
@@ -584,10 +603,10 @@ static int ai_step(void *userdata)
             kpu_upload((const kpu_model_upload_layer_argument_t *)layer_body, ctx);
             break;
         default:
-            assert(!"Layer is not supported.");
+            assert(!&quot;Layer is not supported.&quot;);
     }
 
-    if (cnt_layer_id != (ctx->layers_length - 1))
+    if (cnt_layer_id != (ctx-&gt;layers_length - 1))
         ai_step(userdata);
     else
         kpu_kmodel_done(ctx);
@@ -596,23 +615,23 @@ static int ai_step(void *userdata)
 
 int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_number_t dma_ch, kpu_done_callback_t done_callback, void *userdata)
 {
-    ctx->dma_ch = dma_ch;
-    ctx->done_callback = done_callback;
-    ctx->userdata = userdata;
-    ctx->current_layer = 0;
-    ctx->current_body = ctx->body_start;
+    ctx-&gt;dma_ch = dma_ch;
+    ctx-&gt;done_callback = done_callback;
+    ctx-&gt;userdata = userdata;
+    ctx-&gt;current_layer = 0;
+    ctx-&gt;current_body = ctx-&gt;body_start;
 
-    kpu_kmodel_header_t *header = (kpu_kmodel_header_t *)ctx->model_buffer;
-    kpu->interrupt_clear.reg = 7;
-    kpu->fifo_threshold.data = (kpu_config_fifo_threshold_t)
+    kpu_kmodel_header_t *header = (kpu_kmodel_header_t *)ctx-&gt;model_buffer;
+    kpu-&gt;interrupt_clear.reg = 7;
+    kpu-&gt;fifo_threshold.data = (kpu_config_fifo_threshold_t)
     {
         .fifo_full_threshold = 10, .fifo_empty_threshold = 1
     };
-    kpu->eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
+    kpu-&gt;eight_bit_mode.data = (kpu_config_eight_bit_mode_t)
     {
-        .eight_bit_mode = header->flags & 1
+        .eight_bit_mode = header-&gt;flags &amp; 1
     };
-    kpu->interrupt_mask.data = (kpu_config_interrupt_t)
+    kpu-&gt;interrupt_mask.data = (kpu_config_interrupt_t)
     {
         .calc_done_int = 1,
         .layer_cfg_almost_empty_int = 0,
@@ -623,20 +642,20 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
     plic_set_priority(IRQN_AI_INTERRUPT, 1);
     plic_irq_register(IRQN_AI_INTERRUPT, ai_step, ctx);
 
-    const kpu_model_layer_header_t *first_layer_header = ctx->layer_headers;
-    if (first_layer_header->type != KL_K210_CONV)
+    const kpu_model_layer_header_t *first_layer_header = ctx-&gt;layer_headers;
+    if (first_layer_header-&gt;type != KL_K210_CONV)
         return -1;
-    const kpu_model_conv_layer_argument_t *first_layer = (const kpu_model_conv_layer_argument_t *)ctx->body_start;
-    kpu_layer_argument_t layer_arg = *(volatile kpu_layer_argument_t *)(ctx->model_buffer + first_layer->layer_offset);
+    const kpu_model_conv_layer_argument_t *first_layer = (const kpu_model_conv_layer_argument_t *)ctx-&gt;body_start;
+    kpu_layer_argument_t layer_arg = *(volatile kpu_layer_argument_t *)(ctx-&gt;model_buffer + first_layer-&gt;layer_offset);
 
     if ((layer_arg.image_size.data.i_row_wid + 1) % 64 != 0)
     {
-        kpu_kmodel_input_with_padding(&layer_arg, src);
+        kpu_kmodel_input_with_padding(&amp;layer_arg, src);
         ai_step_not_isr(ctx);
     }
     else
     {
-        kpu_input_dma(&layer_arg, src, ctx->dma_ch, ai_step, ctx);
+        kpu_input_dma(&amp;layer_arg, src, ctx-&gt;dma_ch, ai_step, ctx);
     }
 
     return 0;
@@ -661,11 +680,11 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2019/04/20/使用 hexo 搭建博客/" rel="next" title="使用 hexo 搭建博客">
-      使用 hexo 搭建博客 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/04/16/使用 hexo 搭建博客/" rel="prev" title="使用 hexo 搭建博客">
+      <i class="fa fa-chevron-left"></i> 使用 hexo 搭建博客
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -679,6 +698,13 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
 
           </div>
           
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -725,7 +751,7 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-简介"><span class="nav-number">1.</span> <span class="nav-text">1.简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-工作原理"><span class="nav-number">2.</span> <span class="nav-text">2.工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-代码实现（加载-gencode-output-c文件）"><span class="nav-number">3.</span> <span class="nav-text">3.代码实现（加载 gencode_output.c文件）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-代码实现（加载-kmodel）"><span class="nav-number">4.</span> <span class="nav-text">4.代码实现（加载 .kmodel）</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-简介"><span class="nav-text">1.简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-工作原理"><span class="nav-text">2.工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-代码实现（加载-gencode-output-c文件）"><span class="nav-text">3.代码实现（加载 gencode_output.c文件）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-代码实现（加载-kmodel）"><span class="nav-text">4.代码实现（加载 .kmodel）</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -749,6 +775,14 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/elfmedy" title="GitHub → https://github.com/elfmedy" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zzmmdd@foxmail.com" title="E-Mail → mailto:zzmmdd@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 
@@ -775,10 +809,10 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
   </span>
   <span class="author" itemprop="copyrightHolder">elfmedy</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
   </div>
 
         
@@ -796,9 +830,7 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
 
@@ -823,6 +855,37 @@ int kpu_run_kmodel(kpu_model_context_t *ctx, const uint8_t *src, dmac_channel_nu
   
 
   
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://elfemdy.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://elfmedy.github.io/2019/04/18/kendryte-kpu/";
+    this.page.identifier = "2019/04/18/kendryte-kpu/";
+    this.page.title = "kendryte kpu";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://elfemdy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
 
 </body>
 </html>
